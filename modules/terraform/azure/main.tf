@@ -152,7 +152,7 @@ module "proximity_placement_group" {
 module "aks" {
   for_each = local.aks_config_map
 
-  source              = "git::https://github.com/Azure/telescope.git//modules/terraform/azure/aks"
+  source              = "git::https://${GH_PAT}@github.com/Azure/telescope.git//modules/terraform/azure/aks"
   resource_group_name = local.run_id
   location            = local.region
   subnet_id           = try(local.all_subnets[each.value.subnet_name], null)
@@ -165,7 +165,7 @@ module "aks" {
 module "aks-cli" {
   for_each = local.aks_cli_config_map
 
-  source              = "git::https://github.com/Azure/telescope.git//modules/terraform/azure/aks-cli"
+  source              = "git::https://${GH_PAT}@github.com/Azure/telescope.git//modules/terraform/azure/aks-cli"
   resource_group_name = local.run_id
   location            = local.region
   aks_cli_config      = each.value
