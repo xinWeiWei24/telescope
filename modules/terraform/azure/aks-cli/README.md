@@ -109,7 +109,7 @@ RUN_ID=08022024
 OWNER=$(whoami)
 RESULT_PATH=/tmp/$RUN_ID
 CLOUD=azure
-REGION=eastus
+REGION=eastus2
 MACHINE_TYPE=standard_D4_v3
 TERRAFORM_MODULES_DIR=modules/terraform/$CLOUD
 TEST_MODULES_DIR=modules/bash
@@ -118,7 +118,11 @@ SYSTEM_NODE_POOL="{\"name\":\"default\",\"vm_size\":\"Standard_D2s_v3\",\"node_c
 USER_NODE_POOL="[{\"name\":\"pool1\",\"vm_size\":\"Standard_D2s_v3\",\"node_count\":1,\"vm_set_type\":\"VirtualMachineScaleSets\"},{\"name\":\"pool2\",\"vm_size\":\"Standard_D2s_v3\",\"node_count\":1,\"vm_set_type\":\"VirtualMachineScaleSets\"}]"
 ```
 1. az login with your sub
-1. run following command to apply terraform config
+2.Create Resource Group for testing
+```bash
+az group create --name $RUN_ID --location $REGION --tags "run_id=$RUN_ID" "scenario=${SCENARIO_TYPE}-${SCENARIO_NAME}" "owner=azure_devops" "creation_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "deletion_due_time=$(date -u -d '+2 hour' +'%Y-%m-%dT%H:%M:%SZ')"
+```
+3. run following command to apply terraform config
 ```bash
 INPUT_JSON=$(jq -n \
 --arg owner $OWNER \
