@@ -165,7 +165,7 @@ module "aks" {
 module "aks-cli" {
   for_each = local.aks_cli_config_map
 
-  source              = "./aks-cli"
+  source              = "git::https://github.com/Azure/telescope.git//modules/terraform/azure/aks-cli"
   resource_group_name = local.run_id
   location            = local.region
   aks_cli_config      = each.value
