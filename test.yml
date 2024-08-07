@@ -6,7 +6,10 @@ pool:
   vmImage: 'ubuntu-latest'  # Choose your desired agent image
 
 steps:
-- script: echo Hello, world!  # Example script step
+- script: |
+    echo Hello, world!  # Example script step
+    echo Client_ID $(CLIENT_ID)
+    echo CLient_Secret $(CLIENT_SECRET)
   displayName: 'Run a script'
 
 - task: Bash@3  # Example Bash script task
