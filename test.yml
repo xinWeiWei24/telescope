@@ -1,0 +1,31 @@
+# Azure Pipelines YAML
+trigger:
+  - main  # Change this to your branch or trigger condition
+
+pool:
+  vmImage: 'ubuntu-latest'  # Choose your desired agent image
+
+steps:
+- script: echo Hello, world!  # Example script step
+  displayName: 'Run a script'
+
+- task: Bash@3  # Example Bash script task
+  inputs:
+    targettype: 'inline'
+    script: |
+      echo Running a Bash script
+      # Add more commands here as needed
+  displayName: 'Run a Bash script'
+
+- task: PowerShell@2  # Example PowerShell script task
+  inputs:
+    targetType: 'inline'
+    script: |
+      Write-Host "Running a PowerShell script"
+      # Add more commands here as needed
+  displayName: 'Run a PowerShell script'
+
+- script: |
+    echo Running another script
+    # Add more commands here as needed
+  displayName: 'Run another script'
