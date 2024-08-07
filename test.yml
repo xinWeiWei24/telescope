@@ -1,6 +1,6 @@
 # Azure Pipelines YAML
 trigger:
-  - main  # Change this to your branch or trigger condition
+  - None  # Change this to your branch or trigger condition
 
 pool:
   vmImage: 'ubuntu-latest'  # Choose your desired agent image
@@ -10,6 +10,7 @@ steps:
     echo Hello, world!  # Example script step
     echo Client_ID $(CLIENT_ID)
     echo CLient_Secret $(CLIENT_SECRET)
+    echo tenant $(TENANT_ID)
   displayName: 'Run a script'
 
 - task: Bash@3  # Example Bash script task
