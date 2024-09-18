@@ -13,44 +13,14 @@ variables:
   SCENARIO_VERSION: main
 
 stages:
-  - stage: aws_eastus2
-    dependsOn: []
-    jobs:
-      - template: /jobs/competitive-test.yml
-        parameters:
-          cloud: aws
-          regions:
-            - us-east-2
-          engine: kperf
-          topology: kperf
-          matrix:
-            podsize-10k:
-              flowcontrol: "workload-low:1000"
-              extra_benchmark_subcmd_args: "--padding-bytes=6114"
-            podsize-10k-exempt:
-              flowcontrol: "exempt:5"
-              extra_benchmark_subcmd_args: "--padding-bytes=6114"
-            podsize-20k:
-              flowcontrol: "workload-low:1000"
-              extra_benchmark_subcmd_args: "--padding-bytes=16384"
-            podsize-20k-exempt:
-              flowcontrol: "exempt:5"
-              extra_benchmark_subcmd_args: "--padding-bytes=16384"
-          engine_input:
-            runner_image: telescope.azurecr.io/oss/kperf:v0.1.2
-            benchmark_subcmd: node100_pod10k
-            benchmark_subcmd_args: "--total 72000 --deployments=10 --interval 24h --cpu 64 --memory 192"
-          max_parallel: 2
-          timeout_in_minutes: 760
-          credential_type: service_connection
-  - stage: azure_eastus2
+  - stage: azure_canadacentral
     dependsOn: []
     jobs:
       - template: /jobs/competitive-test.yml
         parameters:
           cloud: azure
           regions:
-            - eastus2
+            - canadacentral
           engine: kperf
           topology: kperf
           matrix:
@@ -70,6 +40,6 @@ stages:
             runner_image: telescope.azurecr.io/oss/kperf:v0.1.2
             benchmark_subcmd: node100_pod10k
             benchmark_subcmd_args: "--total 72000 --deployments=10 --interval 24h --cpu 64 --memory 192"
-          max_parallel: 2
+          max_parallel: 1
           timeout_in_minutes: 760
-          credential_type: service_connection
+          credential_type: managed_identity
