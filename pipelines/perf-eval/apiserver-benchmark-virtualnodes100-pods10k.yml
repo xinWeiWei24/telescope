@@ -4,7 +4,7 @@ schedules:
     displayName: "Every 4 Hours"
     branches:
       include:
-        - main
+        - anson-l4-proxy
     always: true
 
 variables:
