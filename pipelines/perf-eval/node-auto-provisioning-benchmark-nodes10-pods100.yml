@@ -1,5 +1,5 @@
 trigger: none
-schedules:
+# schedules:
   # - cron: "0 */2 * * *"
   #   displayName: "Every 2 Hour"
   #   branches:
