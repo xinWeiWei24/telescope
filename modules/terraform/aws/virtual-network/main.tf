@@ -29,6 +29,8 @@ resource "aws_subnet" "subnets" {
 
   availability_zone = "${var.region}${each.value.zone_suffix}"
 
+  depends_on = [aws_internet_gateway_attachment.vpc_internet_gateway_attachment]
+
   tags = merge(local.tags, {
     "Name" = each.value.name
   })
