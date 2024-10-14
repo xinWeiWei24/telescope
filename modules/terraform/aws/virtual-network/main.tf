@@ -107,7 +107,7 @@ resource "aws_route_table" "route_tables" {
     gateway_id = each.value.nat_gateway_name == null ? aws_internet_gateway.internet_gateway.id : aws_nat_gateway.nat-gateways[each.value.nat_gateway_name].id
   }
 
-  depends_on = [aws_internet_gateway.vpc_internet_gateway_attachment]
+  depends_on = [aws_internet_gateway_attachment.vpc_internet_gateway_attachment]
 
   tags = merge(local.tags, {
     "Name" = each.value.name
