@@ -86,11 +86,15 @@ resource "aws_security_group" "security_group" {
 }
 
 resource "aws_internet_gateway" "internet_gateway" {
-  vpc_id = aws_vpc.vpc.id
 
   tags = merge(local.tags, {
     "Name" = "${local.vpc_name}-igw"
   })
+}
+
+resource "aws_internet_gateway_attachment" "vpc_internet_gateway_attachment" {
+  internet_gateway_id = aws_internet_gateway.internet_gateway.id
+  vpc_id              = aws_vpc.vpc.id
 }
 
 resource "aws_route_table" "route_tables" {
@@ -102,6 +106,8 @@ resource "aws_route_table" "route_tables" {
     cidr_block = each.value.cidr_block
     gateway_id = each.value.nat_gateway_name == null ? aws_internet_gateway.internet_gateway.id : aws_nat_gateway.nat-gateways[each.value.nat_gateway_name].id
   }
+
+  depends_on = each.value.nat_gateway_name == null ? [aws_internet_gateway.vpc_internet_gateway_attachment.id] : []
 
   tags = merge(local.tags, {
     "Name" = each.value.name
