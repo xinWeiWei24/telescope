@@ -18,6 +18,28 @@ resource "aws_vpc" "vpc" {
   tags = merge(local.tags, {
     "Name" = local.vpc_name
   })
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOT
+      sec_groups=(aws ec2 describe-security-groups --filters Name=vpc-id,Values=${self.id}  --query "SecurityGroups[].GroupId" --output text)
+      echo $sec_groups
+      for sg in $sec_groups; do
+        network_interfaces_attachment_ids=(aws ec2 describe-network-interfaces --filters Name=group-id,Values=$sg --query "NetworkInterfaces[?Attachment.AttachIndex != '0'].Attachment.AttachmentId --output json)
+        echo "Interfaces attached to security group id '$sg': $network_interfaces_attachment_ids"
+        for network_interface_attachment_id in $network_interfaces_attachment_ids; do
+          echo "Detaching Network Interface attachment id: $network_interface_attachment_id"
+          if ! aws ec2 detach-network-interface --attachment-id $network_interface_attachment_id; then
+            echo "##[warning] Failed to detach Network Interface attachment id: $network_interface_attachment_id"
+          fi
+        done
+        echo "Deleting available Security Group: $sg"
+        if ! aws ec2 delete-security-group --group-id $sg; then
+          echo "##[warning] Failed to delete Security Group id: $sg"
+        fi
+      done
+    EOT
+  }
 }
 
 resource "aws_subnet" "subnets" {
