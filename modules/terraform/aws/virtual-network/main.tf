@@ -22,7 +22,7 @@ resource "aws_vpc" "vpc" {
   provisioner "local-exec" {
     when    = destroy
     command = <<-EOT
-      sec_groups=$(aws ec2 describe-security-groups --filters Name=vpc-id,Values=${self.id}  --query "SecurityGroups[].GroupId" --output text)
+      sec_groups=$(aws ec2 describe-security-groups --filters Name=vpc-id,Values=${self.id}  --query "SecurityGroups[?GroupName != 'default'].GroupId" --output text)
       echo $sec_groups
       for sg in $sec_groups; do
         network_interfaces_attachment_ids=$(aws ec2 describe-network-interfaces --filters Name=group-id,Values=$sg --query "NetworkInterfaces[?Attachment.AttachIndex != '0'].Attachment.AttachmentId" --output text)
