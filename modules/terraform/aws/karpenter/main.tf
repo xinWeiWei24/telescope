@@ -64,13 +64,6 @@ locals {
   eks_managed_node_group  = var.karpenter_config.eks_managed_node_group
   karpenter_chart_version = var.karpenter_config.karpenter_chart_version
 
-  tags = {
-    "owner"             = var.owner
-    "scenario"          = "${var.scenario_type}-${var.scenario_name}"
-    "creation_time"     = timestamp()
-    "deletion_due_time" = timeadd(timestamp(), var.deletion_delay)
-    "run_id"            = local.run_id
-  }
   azs = slice(data.aws_availability_zones.available.names, 0, 3)
 }
 
