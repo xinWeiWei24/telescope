@@ -124,7 +124,6 @@ module "vpc" {
     "karpenter.sh/discovery"                      = local.cluster_name
   }
 
-  tags = local.tags
 }
 
 ###############################################################################
@@ -184,9 +183,9 @@ module "eks" {
     }
   }
 
-  tags = merge(local.tags, {
+  tags = {
     "karpenter.sh/discovery" = local.cluster_name
-  })
+  }
 
   depends_on = [
     module.vpc.vpc_id
