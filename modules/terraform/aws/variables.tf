@@ -3,6 +3,7 @@ variable "json_input" {
   type = object({
     run_id = string
     region = string
+    current_time = string
   })
 }
 
