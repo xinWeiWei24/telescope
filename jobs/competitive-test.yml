@@ -60,9 +60,6 @@ jobs:
     matrix:
       ${{ parameters.matrix }}
   timeoutInMinutes: ${{ parameters.timeout_in_minutes }}
-  variables:
-  - name: CURRENT_TIME
-    value: $[format('{0:yyyy-MM-ddTHH:mm:ssZ}', pipeline.startTime)]
   steps:
   - template: /steps/setup-tests.yml
     parameters:
@@ -78,7 +75,6 @@ jobs:
     parameters:
       cloud: ${{ parameters.cloud }}
       regions: ${{ parameters.regions }}
-      current_time: $(CURRENT_TIME)
       terraform_modules_dir: ${{ parameters.terraform_modules_dir }}
       terraform_input_file_mapping: ${{ parameters.terraform_input_file_mapping }}
       terraform_arguments: ${{ parameters.terraform_arguments }}
