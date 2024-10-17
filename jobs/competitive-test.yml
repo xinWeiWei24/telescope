@@ -52,9 +52,6 @@ parameters:
   type: boolean
   default: true
 
-variables:
-- name: CURRENT_TIME
-  value: $[format('{0:yyyy-MM-ddTHH:mm:ssZ}', pipeline.startTime)]
 
 jobs:
 - job: ${{ parameters.cloud }}
@@ -63,6 +60,9 @@ jobs:
     matrix:
       ${{ parameters.matrix }}
   timeoutInMinutes: ${{ parameters.timeout_in_minutes }}
+  variables:
+  - name: CURRENT_TIME
+    value: $[format('{0:yyyy-MM-ddTHH:mm:ssZ}', pipeline.startTime)]
   steps:
   - template: /steps/setup-tests.yml
     parameters:
