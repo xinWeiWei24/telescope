@@ -3,12 +3,25 @@ locals {
   eks_cluster_name   = "${var.eks_config.eks_name}-${var.run_id}"
   eks_node_group_map = { for node_group in var.eks_config.eks_managed_node_groups : node_group.name => node_group }
   karpenter_addons_map = {
-    for addon in [{ name = "vpc-cni", policy_arns = ["AmazonEKS_CNI_Policy"] }, { name = "kube-proxy" }, { name = "coredns" }] : addon.name =>
+    for addon in [
+      { name        = "vpc-cni",
+        policy_arns = ["AmazonEKS_CNI_Policy"],
+        configuration_values = jsonencode({
+          env = {
+            ENABLE_PREFIX_DELEGATION = "true"
+            WARM_PREFIX_TARGET       = "1"
+          }
+        })
+      },
+      { name = "kube-proxy" },
+      { name = "coredns" }
+    ] : addon.name =>
     {
-      name            = addon.name
-      version         = lookup(addon, "version", null)
-      service_account = lookup(addon, "service_account", null)
-      policy_arns     = lookup(addon, "policy_arns", [])
+      name                 = addon.name
+      version              = lookup(addon, "version", null)
+      service_account      = lookup(addon, "service_account", null)
+      policy_arns          = lookup(addon, "policy_arns", []),
+      configuration_values = lookup(addon, "configuration_values", null)
     }
   }
 
