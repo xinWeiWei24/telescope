@@ -1,13 +1,13 @@
 variable "json_input" {
   description = "value of the json input"
   type = object({
-    run_id = string
-    region = string
+    run_id       = string
+    region       = string
     current_time = string
   })
 
   validation {
-    condition     = can(formatdate("", var.json_input.current_time)) #can(rfc3339_parse(var.json_input.current_time)) #
+    condition     = can(formatdate("", var.json_input.current_time))
     error_message = "The current_time value must be a valid rfc3339 format string"
   }
 
@@ -128,6 +128,7 @@ variable "eks_config_list" {
       service_account = optional(string)
       policy_arns     = optional(list(string), [])
     }))
+    kubernetes_version = optional(string, null)
   }))
   default = []
 }
