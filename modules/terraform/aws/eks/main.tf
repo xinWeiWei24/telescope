@@ -3,20 +3,15 @@ locals {
   eks_cluster_name   = "${var.eks_config.eks_name}-${var.run_id}"
   eks_node_group_map = { for node_group in var.eks_config.eks_managed_node_groups : node_group.name => node_group }
   tags_json          = jsonencode(var.tags)
-
-  eks_config_addons_map = { for addon in var.eks_config.eks_addons : addon.name => addon }
-
   karpenter_addons_map = {
     for addon in [
-      { name = "vpc-cni" },
       { name = "kube-proxy" },
       { name = "coredns" }
     ] : addon.name => addon
     if var.eks_config.enable_karpenter
   }
 
-  # Set default VPC-CNI settings if addon is present in the config
-  vpc_cni_addon_map = contains(keys(local.karpenter_addons_map), "vpc-cni") || contains(keys(local.eks_config_addons_map), "vpc-cni") ? {
+  vpc_cni_addon_map = {
     "vpc-cni" = {
       name        = "vpc-cni",
       policy_arns = ["AmazonEKS_CNI_Policy"],
@@ -32,8 +27,10 @@ locals {
         }
       })
     }
-  } : {}
+  }
 
+  eks_config_addons_map = { for addon in var.eks_config.eks_addons : addon.name => addon }
+  # Add vpc-cni as default
   eks_addons_map = merge(local.karpenter_addons_map, local.eks_config_addons_map, local.vpc_cni_addon_map) # note: the order matters (the later takes precedence)
 
   policy_arns = var.eks_config.policy_arns
