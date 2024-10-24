@@ -1,5 +1,9 @@
 locals {
-  policy_arns         = flatten([for addon in var.eks_addon_config_map : addon.policy_arns])
+  addon_policy_arns_list = flatten([
+    for addon in var.eks_addon_config_map : [
+      for policy_arn in addon.policy_arns : { addon_name : addon.name, policy_arn : policy_arn }
+  ]])
+
   service_account_map = { for addon in var.eks_addon_config_map : addon.name => addon.service_account if addon.service_account != null }
 }
 
@@ -45,16 +49,19 @@ data "aws_iam_policy_document" "addon_assume_role_policy" {
 }
 
 resource "aws_iam_role" "addon_role" {
+  for_each    = var.eks_addon_config_map
+  name_prefix = each.value.name
+
   assume_role_policy = data.aws_iam_policy_document.addon_assume_role_policy.json
 
   depends_on = [data.aws_iam_policy_document.addon_assume_role_policy]
 }
 
 resource "aws_iam_role_policy_attachment" "addon_policy_attachments" {
-  for_each = toset(local.policy_arns)
+  for_each = { for entry in local.addon_policy_arns_list : "${entry.addon_name}.${entry.policy_arn}" => entry } # need to covert to map
 
-  policy_arn = "arn:aws:iam::aws:policy/${each.value}"
-  role       = aws_iam_role.addon_role.name
+  policy_arn = "arn:aws:iam::aws:policy/${each.value.policy_arn}"
+  role       = aws_iam_role.addon_role[each.value.addon_name].name
   depends_on = [aws_iam_role.addon_role]
 }
 
@@ -64,7 +71,7 @@ resource "aws_eks_addon" "addon" {
   cluster_name             = var.cluster_name
   addon_name               = each.value.name
   addon_version            = each.value.version
-  service_account_role_arn = aws_iam_role.addon_role.arn
+  service_account_role_arn = aws_iam_role.addon_role[each.value.name].arn
   configuration_values     = each.value.configuration_values
 
 
