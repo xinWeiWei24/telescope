@@ -14,7 +14,7 @@ spec:
   amiSelectorTerms:
     - alias: al2@latest
   tags:
-    owner: "${OWNER}"
+    owner: ${OWNER}
     scenario: "${SCENARIO}"
     deletion_due_time: "${DELETION_DUE_TIME}"
     run_id: "${RUN_ID}"
