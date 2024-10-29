@@ -32,13 +32,16 @@ steps:
           export SUBNET_ID_1=$(echo $eks_info | jq -r .cluster.resourcesVpcConfig.subnetIds[1])
           echo "CLUSTER_NAME: $CLUSTER_NAME, ROLE_NAME: $ROLE_NAME, SUBNET_ID_0: $SUBNET_ID_0, SUBNET_ID_1: $SUBNET_ID_1"
 
-          envsubst < $KARPENTER_NODEPOOL_FILE | tee $KARPENTER_NODEPOOL_FILE
           cat $KARPENTER_NODEPOOL_FILE
-          kubectl apply -f $KARPENTER_NODEPOOL_FILE
+          envsubst < "$KARPENTER_NODEPOOL_FILE" > "${KARPENTER_NODEPOOL_FILE}.tmp"
+          cat "${KARPENTER_NODEPOOL_FILE}.tmp"
+          kubectl apply -f "${KARPENTER_NODEPOOL_FILE}.tmp"
 
           kubectl describe ec2nodeclass
           kubectl describe nodepool
         env:
+          CLOUD: ${{ parameters.cloud }}
           KARPENTER_NODEPOOL_FILE: $(Pipeline.Workspace)/s/scenarios/$(SCENARIO_TYPE)/$(SCENARIO_NAME)/kubernetes/karpenter_nodepool.${{ parameters.cloud }}.yml
+          CNI_FILE: $(Pipeline.Workspace)/s/scenarios/$(SCENARIO_TYPE)/$(SCENARIO_NAME)/kubernetes/cni-metrics-helper.yaml
           REGION: ${{ parameters.regions[0] }}
         displayName: "Validate Karpenter setup"
