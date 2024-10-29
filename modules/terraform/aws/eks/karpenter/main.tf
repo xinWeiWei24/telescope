@@ -218,10 +218,6 @@ resource "terraform_data" "install_karpenter" {
         --namespace "${local.karpenter_namespace}" \
         --set "settings.clusterName=${var.cluster_name}" \
         --wait
-      sleep 10
-      envsubst  < "${path.module}/NodeClass.yml" | kubectl apply -f -
-      kubectl get ec2nodeclass default -o yaml
-
       EOT
     environment = {
       ROLE_NAME         = var.cluster_iam_role_name

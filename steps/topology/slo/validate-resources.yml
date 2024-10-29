@@ -15,8 +15,30 @@ steps:
     parameters:
       desired_nodes: 6
   - ${{ if eq(parameters.cloud, 'aws') }}:
-      - script: kubectl apply -f $KARPENTER_NODEPOOL_FILE
+      - script: |
+          export RUN_ID=$RUN_ID
+          export OWNER=$OWNER
+          export SCENARIO=${SCENARIO_TYPE}-${SCENARIO_NAME}
+          export DELETION_DUE_TIME=$DELETION_DUE_TIME
+          echo "RUN_ID: $RUN_ID, OWNER: $OWNER, SCENARIO: $SCENARIO, DELETION_DUE_TIME: $DELETION_DUE_TIME"
+
+          eks_arn=$(aws resourcegroupstaggingapi get-resources --resource-type-filters "eks:cluster" \
+            --tag-filters "Key=run_id,Values=$RUN_ID" "Key=scenario,Values=$SCENARIO" \
+            --query "ResourceTagMappingList[].ResourceARN" --region $REGION --output text)
+          eks_info=$(aws eks describe-cluster --name $(basename $eks_arn) --region $REGION)
+          export CLUSTER_NAME=$(basename $eks_arn)
+          export ROLE_NAME=$(echo $eks_info | jq -r .cluster.roleArn | cut -d/ -f2)
+          export SUBNET_ID_0=$(echo $eks_info | jq -r .cluster.resourcesVpcConfig.subnetIds[0])
+          export SUBNET_ID_1=$(echo $eks_info | jq -r .cluster.resourcesVpcConfig.subnetIds[1])
+          echo "CLUSTER_NAME: $CLUSTER_NAME, ROLE_NAME: $ROLE_NAME, SUBNET_ID_0: $SUBNET_ID_0, SUBNET_ID_1: $SUBNET_ID_1"
+
+          envsubst < $KARPENTER_NODEPOOL_FILE | tee $KARPENTER_NODEPOOL_FILE
+          cat $KARPENTER_NODEPOOL_FILE
+          kubectl apply -f $KARPENTER_NODEPOOL_FILE
+
+          kubectl describe ec2nodeclass
+          kubectl describe nodepool
         env:
-          CLOUD: ${{ parameters.cloud }}
           KARPENTER_NODEPOOL_FILE: $(Pipeline.Workspace)/s/scenarios/$(SCENARIO_TYPE)/$(SCENARIO_NAME)/kubernetes/karpenter_nodepool.${{ parameters.cloud }}.yml
+          REGION: ${{ parameters.regions[0] }}
         displayName: "Validate Karpenter setup"

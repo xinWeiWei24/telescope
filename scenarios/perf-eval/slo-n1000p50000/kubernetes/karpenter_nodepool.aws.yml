@@ -1,3 +1,50 @@
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: nodeclass0
+spec:
+  amiFamily: AL2 # Amazon Linux 2
+  role: "${ROLE_NAME}"
+  subnetSelectorTerms:
+    - id: ${SUBNET_ID_0}
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: ${CLUSTER_NAME}
+  amiSelectorTerms:
+    - alias: al2@latest
+  tags:
+    owner: "${OWNER}"
+    scenario: "${SCENARIO}"
+    deletion_due_time: "${DELETION_DUE_TIME}"
+    run_id: "${RUN_ID}"
+    KarpenterNodePoolName: nodeclass0
+    NodeType: nodeclass0
+    karpenter.sh/discovery: ${CLUSTER_NAME}
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: nodeclass1
+spec:
+  amiFamily: AL2 # Amazon Linux 2
+  role: "${ROLE_NAME}"
+  subnetSelectorTerms:
+    - id: ${SUBNET_ID_1}
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: ${CLUSTER_NAME}
+  amiSelectorTerms:
+    - alias: al2@latest
+  tags:
+    owner: "${OWNER}"
+    scenario: "${SCENARIO}"
+    deletion_due_time: "${DELETION_DUE_TIME}"
+    run_id: "${RUN_ID}"
+    KarpenterNodePoolName: nodeclass1
+    NodeType: nodeclass1
+    karpenter.sh/discovery: ${CLUSTER_NAME}
+---
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
@@ -16,7 +63,7 @@ spec:
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
-        name: default
+        name: nodeclass0
       requirements:
         - key: kubernetes.io/arch
           operator: In
@@ -61,7 +108,7 @@ spec:
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
-        name: default
+        name: nodeclass1
       requirements:
         - key: kubernetes.io/arch
           operator: In
