@@ -16,6 +16,10 @@ locals {
     "run_id"            = local.run_id
   }
 
+  network_config_map = { for network in var.network_config_list : network.role => network }
+
+  all_subnets = merge([for network in var.network_config_list : module.virtual_network[network.role].subnets]...)
+
   updated_aks_config_list = length(var.aks_config_list) > 0 ? [
     for aks in var.aks_config_list : merge(
       aks,
@@ -53,6 +57,25 @@ provider "azurerm" {
   features {}
 }
 
+module "public_ips" {
+  source                = "./public-ip"
+  resource_group_name   = local.run_id
+  location              = local.region
+  public_ip_config_list = var.public_ip_config_list
+  tags                  = local.tags
+}
+
+module "virtual_network" {
+  for_each = local.network_config_map
+
+  source              = "./network"
+  network_config      = each.value
+  resource_group_name = local.run_id
+  location            = local.region
+  public_ips          = module.public_ips.pip_ids
+  tags                = local.tags
+}
+
 module "aks" {
   for_each = local.aks_config_map
 
@@ -61,6 +84,9 @@ module "aks" {
   location            = local.region
   aks_config          = each.value
   tags                = local.tags
+  subnet_id           = try(local.all_subnets[each.value.subnet_name], null)
+  vnet_id             = try(module.virtual_network[each.value.role].vnet_id, null)
+  subnets             = try(local.all_subnets, null)
 }
 
 module "aks-cli" {

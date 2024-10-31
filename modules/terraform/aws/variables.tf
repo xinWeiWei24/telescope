@@ -58,9 +58,10 @@ variable "deletion_delay" {
 variable "network_config_list" {
   description = "Configuration for creating the server network."
   type = list(object({
-    role           = string
-    vpc_name       = string
-    vpc_cidr_block = string
+    role                       = string
+    vpc_name                   = string
+    vpc_cidr_block             = string
+    secondary_ipv4_cidr_blocks = optional(list(string))
     subnet = list(object({
       name                    = string
       cidr_block              = string
@@ -131,6 +132,9 @@ variable "eks_config_list" {
       version         = optional(string)
       service_account = optional(string)
       policy_arns     = optional(list(string), [])
+      configuration_values = optional(object({
+        env = optional(map(string))
+      }))
     }))
     kubernetes_version = optional(string, null)
   }))
