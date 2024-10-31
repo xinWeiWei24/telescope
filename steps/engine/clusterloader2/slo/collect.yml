@@ -7,6 +7,8 @@ parameters:
   default: {}
 - name: region
   type: string
+- name: enable_karpenter
+  type: boolean
 
 steps:
 - template: /steps/cloud/${{ parameters.cloud }}/collect-cloud-info.yml
@@ -25,3 +27,5 @@ steps:
     PYTHON_SCRIPT_FILE: $(Pipeline.Workspace)/s/modules/python/clusterloader2/slo/slo.py
     CL2_REPORT_DIR: $(Pipeline.Workspace)/s/modules/python/clusterloader2/slo/results
   displayName: "Collect Results"
+- ${{ if eq(parameters.enable_karpenter, true) }}:
+  - template: /steps/engine/clusterloader2/autoscale/cleanup.yml

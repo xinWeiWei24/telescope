@@ -10,7 +10,7 @@ schedules:
 variables:
   SCENARIO_TYPE: perf-eval
   SCENARIO_NAME: cilium-cluster-churn-n1000p50k
-  SCENARIO_VERSION: main
+  SCENARIO_VERSION: test
 
 stages:
   - stage: aws_eastus1
@@ -28,12 +28,14 @@ stages:
           matrix:
             aws_vpc_cni:
               cpu_per_node: 4
-              node_count: 1000
-              node_per_step: 100
+              node_count: 100
+              node_per_step: 10
               max_pods: 110
               repeats: 1
               scale_timeout: "30m"
               cilium_enabled: False
+              enable_karpenter: "true"
+              initial_node_count: 6
           max_parallel: 1
           timeout_in_minutes: 720
           credential_type: service_connection
@@ -53,22 +55,26 @@ stages:
           matrix:
             azure_cni:
               cpu_per_node: 4
-              node_count: 1000
-              node_per_step: 100
+              node_count: 100
+              node_per_step: 10
               max_pods: 110
               repeats: 1
               scale_timeout: "30m"
               cilium_enabled: False
+              enable_karpenter: "false"
+              initial_node_count: 6
             azure_cilium:
               cpu_per_node: 4
-              node_count: 1000
-              node_per_step: 100
+              node_count: 100
+              node_per_step: 10
               max_pods: 110
               repeats: 1
               scale_timeout: "30m"
               cilium_enabled: True
               network_policy: cilium
               network_dataplane: cilium
+              enable_karpenter: "false"
+              initial_node_count: 6
           max_parallel: 2
           timeout_in_minutes: 720
           credential_type: service_connection

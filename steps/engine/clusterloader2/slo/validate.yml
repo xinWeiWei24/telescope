@@ -4,6 +4,10 @@ parameters:
   - name: operation_timeout
     type: number
     default: 10
+  - name: enable_karpenter
+    type: boolean
+  - name: cloud
+    type: string
 
 steps:
   - script: |
@@ -17,3 +21,9 @@ steps:
       DESIRED_NODES: ${{ parameters.desired_nodes }}
       OPERATION_TIMEOUT: ${{ parameters.operation_timeout }}
       PYTHON_SCRIPT_FILE: $(Pipeline.Workspace)/s/modules/python/clusterloader2/slo/slo.py
+  - ${{ if eq(parameters.enable_karpenter, true) }}:
+      - script: kubectl apply -f $KARPENTER_NODEPOOL_FILE
+        env:
+          CLOUD: ${{ parameters.cloud }}
+          KARPENTER_NODEPOOL_FILE: $(Pipeline.Workspace)/s/scenarios/$(SCENARIO_TYPE)/$(SCENARIO_NAME)/kubernetes/karpenter_nodepool.${{ parameters.cloud }}.yml
+        displayName: "Validate Karpenter setup"
