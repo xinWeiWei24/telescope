@@ -64,8 +64,6 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 data "aws_iam_policy_document" "cw_put_metrics" {
-  count = var.eks_config.enable_cni_metrics_helper ? 1 : 0
-
   statement {
     sid = "VisualEditor0"
 
@@ -76,11 +74,9 @@ data "aws_iam_policy_document" "cw_put_metrics" {
 }
 
 resource "aws_iam_policy" "cw_policy" {
-  count = var.eks_config.enable_cni_metrics_helper ? 1 : 0
-
-  name        = "cw-policy-${local.eks_cluster_name}"
+  name        = "cw-policy"
   description = "Grants permission to write metrics to CloudWatch"
-  policy      = data.aws_iam_policy_document.cw_put_metrics[0].json
+  policy      = data.aws_iam_policy_document.cw_put_metrics.json
 }
 
 resource "aws_iam_role" "eks_cluster_role" {
@@ -95,9 +91,7 @@ resource "aws_iam_role_policy_attachment" "policy_attachments" {
 }
 
 resource "aws_iam_role_policy_attachment" "cw_policy_attachment" {
-  count = var.eks_config.enable_cni_metrics_helper ? 1 : 0
-
-  policy_arn = aws_iam_policy.cw_policy[0].arn
+  policy_arn = aws_iam_policy.cw_policy.arn
   role       = aws_iam_role.eks_cluster_role.name
 }
 
@@ -196,8 +190,6 @@ module "karpenter" {
 }
 
 resource "terraform_data" "install_cni_metrics_helper" {
-  count = var.eks_config.enable_cni_metrics_helper ? 1 : 0
-
   provisioner "local-exec" {
     command = <<EOT
       #!/bin/bash
@@ -205,8 +197,7 @@ resource "terraform_data" "install_cni_metrics_helper" {
       helm repo add eks https://aws.github.io/eks-charts
       helm repo update eks
       aws eks update-kubeconfig --region ${var.region} --name ${local.eks_cluster_name}
-      helm upgrade --install cni-metrics-helper --namespace kube-system eks/cni-metrics-helper  \
-        --set "env.AWS_CLUSTER_ID=${local.eks_cluster_name}"
+      helm upgrade --install cni-metrics-helper --namespace kube-system eks/cni-metrics-helper --version v1.18.3 --set "env.AWS_CLUSTER_ID=${local.eks_cluster_name}"
 
       EOT
   }
