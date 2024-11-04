@@ -20,7 +20,7 @@ stages:
         parameters:
           cloud: aws
           regions:
-            - us-east-2
+            - us-east-1
           engine: clusterloader2
           engine_input:
             image: "ghcr.io/azure/clusterloader2:v20241002"
@@ -28,15 +28,15 @@ stages:
           matrix:
             c4-n10-p100:
               cpu_per_node: 4
-              node_count: 10
-              pod_count: 100
-              scale_up_timeout: "15m"
-              scale_down_timeout: "15m"
+              node_count: 500
+              pod_count: 5000
+              scale_up_timeout: "45m"
+              scale_down_timeout: "45m"
               node_label_selector: "cas = dedicated"
               node_selector: "{cas: dedicated}"
-              loop_count: 5
+              loop_count: 1
           max_parallel: 1
-          timeout_in_minutes: 360
+          timeout_in_minutes: 720
           credential_type: service_connection
           ssh_key_enabled: false
   - stage: azure_eastus2

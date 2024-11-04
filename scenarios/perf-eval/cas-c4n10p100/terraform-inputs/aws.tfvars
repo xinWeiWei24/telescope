@@ -87,14 +87,24 @@ eks_config_list = [{
       ami_type       = "AL2_x86_64"
       instance_types = ["m5.xlarge"]
       min_size       = 0
-      max_size       = 10
+      max_size       = 500
       desired_size   = 0
       capacity_type  = "ON_DEMAND"
       labels         = { "cas" = "dedicated" }
       taints         = []
     }
   ]
-  eks_addons         = []
+  eks_addons         = [
+    {
+      name = "vpc-cni"
+    },
+    {
+      name = "kube-proxy"
+    },
+    {
+      name = "coredns"
+    }
+  ]
   kubernetes_version = "1.31"
   auto_scaler_profile = {
     scale_down_delay_after_add = "0m"

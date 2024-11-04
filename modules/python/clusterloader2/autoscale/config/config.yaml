@@ -8,7 +8,7 @@
 {{$podLabelSelector := DefaultParam .CL2_POD_LABEL_SELECTOR "app = inflate"}}
 {{$scaleUpTimeout := DefaultParam .CL2_SCALE_UP_TIMEOUT "30m"}}
 {{$scaleDownTimeout := DefaultParam .CL2_SCALE_DOWN_TIMEOUT "10m"}}
-{{$refreshInterval := DefaultParam .CL2_REFRESH_INTERVAL "5s"}}
+{{$refreshInterval := DefaultParam .CL2_REFRESH_INTERVAL "30s"}}
 {{$loopCount := DefaultParam .CL2_LOOP_COUNT 1}}
 {{$coolDownTime := DefaultParam .CL2_COOLDOWN_TIME "30s"}}
 
