@@ -80,6 +80,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
   workload_identity_enabled = var.aks_config.workload_identity_enabled
   kubernetes_version        = var.aks_config.kubernetes_version
   edge_zone                 = var.aks_config.edge_zone
+
+  lifecycle {
+    postcondition {
+      condition = self.default_node_pool[0].node_count == var.aks_config.default_node_pool.node_count
+      error_message = "Default node pool does not have the expected number of nodes (${var.aks_config.default_node_pool.node_count})"
+    }
+  }
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "pools" {
@@ -100,6 +107,13 @@ resource "azurerm_kubernetes_cluster_node_pool" "pools" {
   min_count             = try(each.value.min_count, null)
   max_count             = try(each.value.max_count, null)
   auto_scaling_enabled  = try(each.value.auto_scaling_enabled, false)
+
+  lifecycle {
+    postcondition {
+      condition = self.node_count == local.extra_pool_map[each.key].node_count
+      error_message = "Node pool ${each.key} does not have the expected number of nodes (${local.extra_pool_map[each.key].node_count})"
+    }
+  }
 }
 
 resource "azurerm_role_assignment" "aks_on_subnet" {
