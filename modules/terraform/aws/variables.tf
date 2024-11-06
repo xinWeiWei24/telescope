@@ -12,13 +12,8 @@ variable "json_input" {
   }
 
   validation {
-    condition     = timecmp(var.json_input.creation_time, timeadd(plantimestamp(), "-1h")) > 0
-    error_message = "The creation_time must not be older than 1h from now"
-  }
-
-  validation {
     condition     = timecmp(var.json_input.creation_time, timeadd(plantimestamp(), "+1h")) < 0
-    error_message = "The creation_time must not be younger than 1h from now"
+    error_message = "The creation_time must not be more than 1 hour from now (${plantimestamp()})"
   }
 }
 
