@@ -13,14 +13,14 @@ variables:
   SCENARIO_VERSION: main
 
 stages:
-  - stage: aws_easteu2
+  - stage: aws_westeu2
     dependsOn: []
     jobs:
       - template: /jobs/competitive-test.yml
         parameters:
           cloud: aws
           regions:
-            - eu-east-2
+            - eu-west-2
           engine: clusterloader2
           engine_input:
             image: "ghcr.io/azure/clusterloader2:v20241022"
