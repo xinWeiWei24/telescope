@@ -19,7 +19,7 @@ network_config_list = [
       {
         name                    = "slo-subnet-2"
         cidr_block              = "10.1.0.0/17"
-        zone_suffix             = "b"
+        zone_suffix             = "c"
         map_public_ip_on_launch = true
       },
       {
@@ -152,4 +152,5 @@ eks_config_list = [{
     { name = "coredns" }
   ]
   kubernetes_version = "1.30"
+  enable_cni_metrics_helper = true
 }]

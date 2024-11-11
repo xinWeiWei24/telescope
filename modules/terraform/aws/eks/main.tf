@@ -25,7 +25,9 @@ locals {
           # This significantly increases number of pods that can be run per node. (see: https://aws.amazon.com/blogs/containers/amazon-vpc-cni-increases-pods-per-node-limits/)
           # Note: we've seen that it also prevents ENIs leak caused the issue: https://github.com/aws/amazon-vpc-cni-k8s/issues/608
           ENABLE_PREFIX_DELEGATION = "true"
-          WARM_PREFIX_TARGET       = "1"
+          MINIMUM_IP_TARGET        = "52"
+          WARM_IP_TARGET           = "1"
+          # WARM_PREFIX_TARGET       = "1"
 
           ADDITIONAL_ENI_TAGS = jsonencode(var.tags)
         }
