@@ -103,11 +103,6 @@ eks_config_list = [{
       capacity_type  = "ON_DEMAND"
       labels         = { "slo" = "true" }
       taints = [
-        {
-          key    = "slo"
-          value  = "true"
-          effect = "NO_SCHEDULE"
-        }
       ]
     },
     {
@@ -120,11 +115,6 @@ eks_config_list = [{
       capacity_type  = "ON_DEMAND"
       labels         = { "slo" = "true" }
       taints = [
-        {
-          key    = "slo"
-          value  = "true"
-          effect = "NO_SCHEDULE"
-        }
       ]
     },
     {
@@ -137,11 +127,6 @@ eks_config_list = [{
       capacity_type  = "ON_DEMAND"
       labels         = { "slo" = "true" }
       taints = [
-        {
-          key    = "slo"
-          value  = "true"
-          effect = "NO_SCHEDULE"
-        }
       ]
     }
   ]
@@ -152,4 +137,5 @@ eks_config_list = [{
     { name = "coredns" }
   ]
   kubernetes_version = "1.30"
+  enable_cni_metrics_helper = true
 }]

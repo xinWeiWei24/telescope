@@ -27,7 +27,8 @@ locals {
           ENABLE_PREFIX_DELEGATION = "true"
           WARM_PREFIX_TARGET       = "1"
 
-          ADDITIONAL_ENI_TAGS = jsonencode(var.tags)
+          ADDITIONAL_ENI_TAGS        = jsonencode(var.tags)
+          DISABLE_LEAKED_ENI_CLEANUP = "true"
         }
       }
     }
