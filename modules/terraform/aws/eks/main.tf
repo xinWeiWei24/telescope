@@ -40,7 +40,7 @@ locals {
   policy_arns = var.eks_config.policy_arns
 
   addons_policy_arns  = flatten([for addon in local.eks_addons_map : addon.policy_arns if can(addon.policy_arns)])
-  service_account_map = { for addon in local.eks_addons_map : addon.name => addon.service_account if try(addon.service_account, null) != null }
+  service_account_map = { for addon in local.eks_addons_map : addon.name => addon.service_account if can(addon.service_account) }
 }
 
 data "aws_subnets" "subnets" {
