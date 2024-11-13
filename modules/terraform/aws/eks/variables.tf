@@ -51,6 +51,7 @@ variable "eks_config" {
       configuration_values = optional(object({
         env = optional(map(string))
       }))
+      before_compute = optional(string, false)
     }))
     kubernetes_version = optional(string, null)
     auto_scaler_profile = optional(object({
