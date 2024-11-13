@@ -10,7 +10,7 @@ trigger: none
 variables:
   SCENARIO_TYPE: perf-eval
   SCENARIO_NAME: slo-servicediscovery
-  SCENARIO_VERSION: main
+  SCENARIO_VERSION: rafaelme/karpenter
 
 stages:
   - stage: aws_westeu2
