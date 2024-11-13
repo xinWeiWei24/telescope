@@ -29,7 +29,7 @@ locals {
           WARM_PREFIX_TARGET       = "1"
 
           ADDITIONAL_ENI_TAGS        = jsonencode(var.tags)
-          DISABLE_LEAKED_ENI_CLEANUP = "true"
+          #DISABLE_LEAKED_ENI_CLEANUP = "true"
         }
       }
     }
