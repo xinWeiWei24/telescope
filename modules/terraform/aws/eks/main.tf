@@ -319,9 +319,9 @@ resource "aws_eks_addon" "before_compute" {
     "Name" = each.value.name
   }
 
-  #provisioner "local-exec" {
-  #  command = "aws eks wait addon-active --cluster-name ${aws_eks_cluster.eks.name} --addon-name ${each.value.name}"
-  #}
+  provisioner "local-exec" {
+    command = "aws eks wait addon-active --cluster-name ${aws_eks_cluster.eks.name} --addon-name ${each.value.name}"
+  }
 
   depends_on = [aws_iam_role_policy_attachment.addon_policy_attachments]
 }
@@ -361,5 +361,5 @@ resource "terraform_data" "install_cni_metrics_helper" {
 
       EOT
   }
-  depends_on = [aws_eks_node_group.eks_managed_node_groups]
+  depends_on = [aws_eks_cluster.eks]
 }
