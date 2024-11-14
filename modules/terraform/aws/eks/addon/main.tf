@@ -3,13 +3,6 @@ locals {
   service_account_map = { for addon in var.eks_addon_config_map : addon.name => addon.service_account if addon.service_account != null }
 }
 
-#data "aws_eks_node_group" "node_groups" {
-#  for_each = { for group in var.eks_node_groups : group => {"name" : group} }
-#
-#  cluster_name    = var.cluster_name
-#  node_group_name = each.value.name
-#}
-
 data "aws_iam_openid_connect_provider" "oidc_provider" {
   url = var.cluster_oidc_provider_url
 }
@@ -59,7 +52,6 @@ resource "aws_iam_role_policy_attachment" "addon_policy_attachments" {
 
 resource "aws_eks_addon" "addon" {
   for_each = var.eks_addon_config_map
-  #for_each = { for k, v in var.eks_addon_config_map : k => v if !v.before_compute }
 
   cluster_name             = var.cluster_name
   addon_name               = each.value.name
@@ -72,25 +64,5 @@ resource "aws_eks_addon" "addon" {
     "Name" = each.value.name
   }
 
-  depends_on = [
-    aws_iam_role_policy_attachment.addon_policy_attachments
-    #,data.aws_eks_node_group.node_groups
-  ]
+  depends_on = [aws_iam_role_policy_attachment.addon_policy_attachments]
 }
-
-#resource "aws_eks_addon" "before_compute" {
-#  for_each = { for k, v in var.eks_addon_config_map : k => v if v.before_compute }
-#
-#  cluster_name             = var.cluster_name
-#  addon_name               = each.value.name
-#  addon_version            = each.value.version
-#  service_account_role_arn = aws_iam_role.addon_role.arn
-#  configuration_values     = each.value.configuration_values != null ? jsonencode(each.value.configuration_values) : null
-#
-#
-#  tags = {
-#    "Name" = each.value.name
-#  }
-#
-#  depends_on = [aws_iam_role_policy_attachment.addon_policy_attachments]
-#}
