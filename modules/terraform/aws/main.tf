@@ -49,7 +49,7 @@ module "eks" {
   depends_on = [module.virtual_network]
 }
 
-
+# tflint-ignore: terraform_unused_declarations # (variable used for unit tests)
 variable "eks" {
   type    = object({})
   default = {}
@@ -57,4 +57,4 @@ variable "eks" {
 
 output "eks" {
   value = module.eks
-} 
+}
