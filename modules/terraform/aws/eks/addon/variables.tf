@@ -18,5 +18,6 @@ variable "eks_addon_config_map" {
     configuration_values = optional(object({
       env = optional(map(string))
     }))
+    before_compute = optional(string, false)
   }))
 }
