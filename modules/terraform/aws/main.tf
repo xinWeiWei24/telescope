@@ -58,3 +58,4 @@ variable "eks" {
 output "eks" {
   value = module.eks
 }
+

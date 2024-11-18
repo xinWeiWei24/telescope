@@ -86,19 +86,9 @@ run "valid_vpc_config_default" {
     error_message = "Error WARM_PREFIX_TARGET expected value: '1'"
   }
 
-  assert {
-    condition     = jsondecode(module.eks["eks_name"].eks_addon[0].addons.vpc-cni.configuration_values).env.MINIMUM_IP_TARGET == "0"
-    error_message = "Error MINIMUM_IP_TARGET expected value == '0'"
-  }
-
-  assert {
-    condition     = jsondecode(module.eks["eks_name"].eks_addon[0].addons.vpc-cni.configuration_values).env.WARM_IP_TARGET == "0"
-    error_message = "Error WARM_IP_TARGET expected value == '0'"
-  }
-
 }
 
-run "valid_vpc_config_minimum_ip_target" {
+run "valid_vpc_config_set" {
 
   command = plan
 
@@ -118,8 +108,10 @@ run "valid_vpc_config_minimum_ip_target" {
           desired_size   = 5
         }
       ]
-      eks_addons                = [{ name = "vpc-cni" }]
-      vpc_cni_minimum_ip_target = 50
+      eks_addons = [{
+        name                       = "vpc-cni"
+        vpc_cni_warm_prefix_target = 4
+      }]
     }]
   }
 
@@ -129,17 +121,43 @@ run "valid_vpc_config_minimum_ip_target" {
   }
 
   assert {
-    condition     = jsondecode(module.eks["eks_name"].eks_addon[0].addons.vpc-cni.configuration_values).env.WARM_PREFIX_TARGET == "0"
+    condition     = jsondecode(module.eks["eks_name"].eks_addon[0].addons.vpc-cni.configuration_values).env.WARM_PREFIX_TARGET == "4"
     error_message = "Error WARM_PREFIX_TARGET expected value: '1'"
   }
+}
 
-  assert {
-    condition     = jsondecode(module.eks["eks_name"].eks_addon[0].addons.vpc-cni.configuration_values).env.MINIMUM_IP_TARGET == var.eks_config_list[0].vpc_cni_minimum_ip_target
-    error_message = "Error MINIMUM_IP_TARGET expected value == var.vpc_cni_minimum_ip_target"
+run "valid_karpenter_set" {
+
+  command = plan
+
+  variables {
+    eks_config_list = [{
+      role        = "nap"
+      eks_name    = "eks_name"
+      vpc_name    = "nap-vpc"
+      policy_arns = ["AmazonEKS_CNI_Policy"]
+      eks_managed_node_groups = [
+        {
+          name           = "my_scenario-ng"
+          ami_type       = "AL2_x86_64"
+          instance_types = ["m5a.xlarge"]
+          min_size       = 5
+          max_size       = 5
+          desired_size   = 5
+        }
+      ]
+      enable_karpenter = true
+      eks_addons       = []
+    }]
   }
 
   assert {
-    condition     = jsondecode(module.eks["eks_name"].eks_addon[0].addons.vpc-cni.configuration_values).env.WARM_IP_TARGET == "1"
-    error_message = "Error WARM_IP_TARGET expected value == '1'"
+    condition     = jsondecode(module.eks["eks_name"].eks_addon[0].addons.vpc-cni.configuration_values).env.ENABLE_PREFIX_DELEGATION == "true"
+    error_message = "Error ENABLE_PREFIX_DELEGATION expected value: 'true'"
+  }
+
+  assert {
+    condition     = jsondecode(module.eks["eks_name"].eks_addon[0].addons.vpc-cni.configuration_values).env.WARM_PREFIX_TARGET == "1"
+    error_message = "Error WARM_PREFIX_TARGET expected value: '1'"
   }
 }
