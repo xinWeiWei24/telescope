@@ -125,6 +125,7 @@ variable "eks_config_list" {
         env = optional(map(string))
       }))
       vpc_cni_warm_prefix_target = optional(number, 1)
+      before_compute             = optional(bool, false)
     }))
     vpc_cni_minimum_ip_target = optional(string, "0")
     kubernetes_version        = optional(string, null)

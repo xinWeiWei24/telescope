@@ -21,7 +21,8 @@ locals {
     "vpc-cni" = {
       name           = "vpc-cni",
       policy_arns    = ["AmazonEKS_CNI_Policy"],
-      before_compute = true,
+
+      before_compute = true, # ensure the vpc-cni is created and updated before any EC2 instances are created.
       configuration_values = {
         env = {
           # Enable IPv4 prefix delegation to increase the number of available IP addresses on the provisioned EC2 nodes.
@@ -194,17 +195,6 @@ resource "aws_eks_node_group" "eks_managed_node_groups" {
   ]
 }
 
-#module "eks_addon" {
-#  source = "./addon"
-#
-#  count = length(local.eks_addons_map) != 0 ? 1 : 0
-#
-#  eks_addon_config_map      = local.eks_addons_map
-#  cluster_name              = aws_eks_cluster.eks.name
-#  cluster_oidc_provider_url = aws_eks_cluster.eks.identity[0].oidc[0].issuer
-#  depends_on                = [aws_eks_node_group.eks_managed_node_groups]
-#}
-
 module "karpenter" {
   count = var.eks_config.enable_karpenter ? 1 : 0
 
@@ -346,14 +336,4 @@ resource "terraform_data" "install_cni_metrics_helper" {
       EOT
   }
   depends_on = [aws_eks_cluster.eks]
-}
-
-# tflint-ignore: terraform_unused_declarations # (variable used for unit tests)
-variable "eks_addon" {
-  type    = object({})
-  default = {}
-}
-
-output "eks_addon" {
-  value = aws_eks_addon.before_compute
 }
