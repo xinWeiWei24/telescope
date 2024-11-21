@@ -19,8 +19,8 @@ locals {
   # Set default VPC-CNI settings if addon is present in the config
   vpc_cni_addon_map = contains(keys(local._eks_addons_map), "vpc-cni") ? {
     "vpc-cni" = {
-      name           = "vpc-cni",
-      policy_arns    = ["AmazonEKS_CNI_Policy"],
+      name        = "vpc-cni",
+      policy_arns = ["AmazonEKS_CNI_Policy"],
 
       before_compute = true, # ensure the vpc-cni is created and updated before any EC2 instances are created.
       configuration_values = {
@@ -34,7 +34,7 @@ locals {
           # Should set either WARM_PREFIX_TARGET or both MINIMUM_IP_TARGET and WARM_IP_TARGET (see: https://github.com/aws/amazon-vpc-cni-k8s/blob/master/docs/prefix-and-ip-target.md)
           WARM_PREFIX_TARGET = tostring(local._eks_addons_map["vpc-cni"].vpc_cni_warm_prefix_target)
 
-          ADDITIONAL_ENI_TAGS        = jsonencode(var.tags)
+          ADDITIONAL_ENI_TAGS = jsonencode(var.tags)
         }
       }
     }
@@ -156,6 +156,19 @@ resource "aws_ec2_tag" "cluster_security_group" {
   value       = each.value
 }
 
+resource "aws_launch_template" "launch_template" {
+  for_each = local.eks_node_group_map
+
+  name = "eks-${aws_eks_cluster.eks.name}"
+
+  tag_specifications {
+    resource_type = "instance"
+    tags          = var.tags
+  }
+
+  tags = var.tags
+}
+
 resource "aws_eks_node_group" "eks_managed_node_groups" {
 
   for_each = local.eks_node_group_map
@@ -184,6 +197,11 @@ resource "aws_eks_node_group" "eks_managed_node_groups" {
   instance_types = each.value.instance_types
   capacity_type  = each.value.capacity_type
   labels         = each.value.labels
+
+  launch_template {
+    id      = aws_launch_template.launch_template[each.key].id
+    version = aws_launch_template.launch_template[each.key].latest_version
+  }
 
   tags = {
     "Name" = each.value.name
