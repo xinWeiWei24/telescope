@@ -91,7 +91,7 @@ def validate_clusterloader2(node_count, operation_timeout=600):
     kube_client = KubernetesClient()
     timeout = time.time() + operation_timeout
     while time.time() < timeout:
-        ready_nodes = kube_client.get_ready_nodes()
+        ready_nodes = kube_client.get_ready_nodes(check_network_unavailable=True)
         if len(ready_nodes) == node_count:
             break
         print(f"Waiting for {node_count} nodes to be ready. Currently {len(ready_nodes)} nodes are ready.")
