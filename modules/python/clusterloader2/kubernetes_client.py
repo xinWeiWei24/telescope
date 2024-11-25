@@ -13,11 +13,13 @@ class KubernetesClient:
     
     def get_ready_nodes(self):
         """
-        Get a list of nodes that are in the 'Ready' state and 'NetworkUnavailable' is 'False'.
+        Get a list of nodes that are in the 'Ready' state and do not have a 'NetworkUnavailable' status condition as 'True'.
         """
         nodes = self.get_nodes()
-        return [
-            node for node in nodes 
-            if any(cond.type == "Ready" and cond.status == "True" for cond in node.status.conditions)
-               and any(cond.type == "NetworkUnavailable" and cond.status == "False" for cond in node.status.conditions)
-        ]
+        ready_nodes = []
+        for node in nodes:
+            status_conditions = {cond.type: cond.status for cond in node.status.conditions}
+            if status_conditions.get("Ready") == "True" and status_conditions.get("NetworkUnavailable") != "True":
+                ready_nodes.append(node)
+        
+        return ready_nodes

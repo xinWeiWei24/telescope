@@ -21,12 +21,15 @@ class TestKubernetesClient(unittest.TestCase):
             V1NodeCondition(type="NetworkUnavailable", status="True")
         ]))
         node_not_ready = V1Node(status=V1NodeStatus(conditions=[V1NodeCondition(type="Ready", status="False")]))
-        mock_get_nodes.return_value = [node_ready_network_available, node_ready_network_unavailable, node_not_ready]
+        node_ready_no_network_condition = V1Node(status=V1NodeStatus(conditions=[V1NodeCondition(type="Ready", status="True")]))
+        mock_get_nodes.return_value = [
+            node_ready_network_available, node_ready_network_unavailable, node_not_ready, node_ready_no_network_condition
+        ]
 
         ready_nodes = self.client.get_ready_nodes()
         
         self.maxDiff = None
-        self.assertCountEqual(ready_nodes, [node_ready_network_available])
+        self.assertCountEqual(ready_nodes, [node_ready_network_available, node_ready_no_network_condition])
 
 if __name__ == '__main__':
     unittest.main()
