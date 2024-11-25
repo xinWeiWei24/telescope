@@ -1,5 +1,21 @@
 from kubernetes import client, config
 
+
+# https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions
+# https://kubernetes.io/docs/reference/labels-annotations-taints/
+builtin_taints_keys = [
+	"node.kubernetes.io/not-ready",
+	"node.kubernetes.io/unreachable",
+	"node.kubernetes.io/pid-pressure",
+	"node.kubernetes.io/out-of-disk",
+	"node.kubernetes.io/memory-pressure",
+	"node.kubernetes.io/disk-pressure",
+	"node.kubernetes.io/network-unavailable",
+	"node.kubernetes.io/unschedulable",
+	"node.cloudprovider.kubernetes.io/uninitialized",
+	"node.cloudprovider.kubernetes.io/shutdown",
+]
+
 class KubernetesClient:
     def __init__(self, kubeconfig=None):
         config.load_kube_config(kubeconfig)
@@ -16,10 +32,19 @@ class KubernetesClient:
         Get a list of nodes that are in the 'Ready' state and do not have a 'NetworkUnavailable' status condition as 'True'.
         """
         nodes = self.get_nodes()
-        ready_nodes = []
-        for node in nodes:
-            status_conditions = {cond.type: cond.status for cond in node.status.conditions}
-            if status_conditions.get("Ready") == "True" and status_conditions.get("NetworkUnavailable") != "True":
-                ready_nodes.append(node)
+        return [
+            node for node in nodes
+            if self._is_node_schedulable(node) and self._is_node_untainted(node)
+        ]
+
+    def _is_node_schedulable(self, node):
+        status_conditions = {cond.type: cond.status for cond in node.status.conditions}
+        return (
+            status_conditions.get("Ready") == "True" 
+            and status_conditions.get("NetworkUnavailable") != "True"
+            and node.spec.unschedulable is not True
+        )
+    
+    def _is_node_untainted(self, node):
+        return not any(taint.effect in ("NoSchedule", "NoExecute") or taint.key in builtin_taints_keys for taint in node.spec.taints)
         
-        return ready_nodes
