@@ -37,18 +37,15 @@ class TestKubernetesClient(unittest.TestCase):
             spec=V1NodeSpec(unschedulable=True, taints=[])
             )
         
-        node_ready_no_schedule_taint = V1Node(
-            status=V1NodeStatus(conditions=[V1NodeCondition(type="Ready", status="True")]),
-            spec=V1NodeSpec(unschedulable=False, taints=[V1Taint(key="MyKey", effect="NoSchedule")])
-            )
-        node_ready_no_execute_taint = V1Node(
-            status=V1NodeStatus(conditions=[V1NodeCondition(type="Ready", status="True")]),
-            spec=V1NodeSpec(unschedulable=False, taints=[V1Taint(key="MyKey", effect="NoExecute")])
-            )
         node_ready_shutdown_taint = V1Node(
             status=V1NodeStatus(conditions=[V1NodeCondition(type="Ready", status="True")]),
-            spec=V1NodeSpec(unschedulable=False, taints=[V1Taint(key="node.cloudprovider.kubernetes.io/shutdown", effect="None")])
+            spec=V1NodeSpec(unschedulable=False, taints=[V1Taint(key="node.cloudprovider.kubernetes.io/shutdown", effect="NoSchedule")])
             )
+        
+        node_ready_shutdown_taint_no_effect = V1Node(
+            status=V1NodeStatus(conditions=[V1NodeCondition(type="Ready", status="True")]),
+            spec=V1NodeSpec(unschedulable=False, taints=[V1Taint(key="node.cloudprovider.kubernetes.io/shutdown", effect="")])
+        )
         
         mock_get_nodes.return_value = [
             node_not_ready,
@@ -56,15 +53,14 @@ class TestKubernetesClient(unittest.TestCase):
             node_ready_network_unavailable, 
             node_ready_no_network_condition,
             node_ready_unschedulable,
-            node_ready_no_schedule_taint,
-            node_ready_no_execute_taint,
-            node_ready_shutdown_taint
+            node_ready_shutdown_taint,
+            node_ready_shutdown_taint_no_effect
         ]
 
         ready_nodes = self.client.get_ready_nodes()
         
         self.maxDiff = None
-        self.assertCountEqual(ready_nodes, [node_ready_network_available, node_ready_no_network_condition])
+        self.assertCountEqual(ready_nodes, [node_ready_network_available, node_ready_no_network_condition, node_ready_shutdown_taint_no_effect])
 
 if __name__ == '__main__':
     unittest.main()

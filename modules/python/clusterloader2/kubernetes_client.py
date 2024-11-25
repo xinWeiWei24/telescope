@@ -46,5 +46,5 @@ class KubernetesClient:
         )
     
     def _is_node_untainted(self, node):
-        return not any(taint.effect in ("NoSchedule", "NoExecute") or taint.key in builtin_taints_keys for taint in node.spec.taints)
+        return not any(taint.key in builtin_taints_keys and taint.effect in ("NoSchedule", "NoExecute")  for taint in node.spec.taints)
         
