@@ -39,12 +39,23 @@ class KubernetesClient:
 
     def _is_node_schedulable(self, node):
         status_conditions = {cond.type: cond.status for cond in node.status.conditions}
-        return (
+        is_schedulable = (
             status_conditions.get("Ready") == "True" 
             and status_conditions.get("NetworkUnavailable") != "True"
             and node.spec.unschedulable is not True
         )
-    
-    def _is_node_untainted(self, node):
-        return not any(taint.key in builtin_taints_keys and taint.effect in ("NoSchedule", "NoExecute")  for taint in node.spec.taints)
+        if not is_schedulable:
+            print(f"Node NOT Ready: '{node.metadata.name}' is not schedulable. status_conditions: {status_conditions}. unschedulable: {node.spec.unschedulable}")
         
+        return is_schedulable
+     
+    def _is_node_untainted(self, node):
+        if not node.spec.taints:
+            return True
+        
+        for taint in node.spec.taints:
+            if taint.key in builtin_taints_keys and taint.effect in ("NoSchedule", "NoExecute"):
+                print(f"Node NOT Ready: '{node.metadata.name}' has taint '{taint.key}' with effect '{taint.effect}'")
+                return False
+
+        return True        
