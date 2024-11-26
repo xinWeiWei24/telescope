@@ -29,7 +29,11 @@ class KubernetesClient:
     
     def get_ready_nodes(self):
         """
-        Get a list of nodes that are in the 'Ready' state and do not have a 'NetworkUnavailable' status condition as 'True'.
+        Get a list of nodes that are ready to be scheduled. Should apply all those conditions:
+        - 'Ready' condition status is True
+        - 'NetworkUnavailable' condition status is not present or is False
+        - Spec unschedulable is False
+        - Spec taints do not have any of the builtin taints keys with effect 'NoSchedule' or 'NoExecute'
         """
         nodes = self.get_nodes()
         return [
