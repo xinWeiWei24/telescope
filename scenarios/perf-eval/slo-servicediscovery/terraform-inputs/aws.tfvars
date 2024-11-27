@@ -140,7 +140,7 @@ eks_config_list = [{
       #vpc_cni_warm_prefix_target = 4 # 64 IPs to accomodate 58 Pods (max for m5a.xlarge) + 2 for extras
     },
     { name = "kube-proxy", before_compute = true },
-    { name = "coredns", before_compute = true }
+    { name = "coredns" }
   ]
   kubernetes_version = "1.30"
   enable_cni_metrics_helper = true
