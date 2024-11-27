@@ -142,6 +142,6 @@ eks_config_list = [{
     { name = "kube-proxy", before_compute = true },
     { name = "coredns" }
   ]
-  kubernetes_version = "1.30"
+  kubernetes_version = "1.31"
   enable_cni_metrics_helper = true
 }]
