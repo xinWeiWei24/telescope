@@ -73,10 +73,10 @@ stages:
         parameters:
           cloud: aws
           regions:
-            - us-east-1
+            - eu-west-1
           engine: clusterloader2
           engine_input:
-            image: "ghcr.io/azure/clusterloader2:v20241002"
+            image: "ghcr.io/azure/clusterloader2:v20241016"
           topology: cri-resource-consume
           matrix:
             n10-p300-memory:

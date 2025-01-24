@@ -56,10 +56,11 @@ network_config_list = [
 ]
 
 eks_config_list = [{
-  role        = "client"
-  eks_name    = "cri-resource-consume"
-  vpc_name    = "client-vpc"
-  policy_arns = ["AmazonEKSClusterPolicy", "AmazonEKSVPCResourceController", "AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly", "AmazonSSMManagedInstanceCore"]
+  role                      = "client"
+  eks_name                  = "cri-resource-consume"
+  vpc_name                  = "client-vpc"
+  enable_cluster_autoscaler = true
+  policy_arns               = ["AmazonEKSClusterPolicy", "AmazonEKSVPCResourceController", "AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly", "AmazonSSMManagedInstanceCore"]
   eks_managed_node_groups = [
     {
       name           = "default"
@@ -102,9 +103,10 @@ eks_config_list = [{
     }
   ]
 
-  eks_addons = [
-    {
-      name = "coredns"
-    }
-  ]
+  eks_addons         = []
+  kubernetes_version = "1.31"
+  auto_scaler_profile = {
+    scale_down_delay_after_add = "0m"
+    scale_down_unneeded        = "0m"
+  }
 }]
