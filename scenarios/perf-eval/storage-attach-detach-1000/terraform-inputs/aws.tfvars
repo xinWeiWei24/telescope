@@ -58,7 +58,7 @@ eks_config_list = [{
   role        = "client"
   eks_name    = "perfevala1000"
   vpc_name    = "client-vpc"
-  policy_arns = ["AmazonEKSClusterPolicy", "AmazonEKSVPCResourceController", "AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly"]
+  policy_arns = ["AmazonEKSClusterPolicy", "AmazonEKSVPCResourceController", "AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly", "AmazonEBSCSIDriverPolicy"]
   eks_managed_node_groups = [
     {
       name           = "user"
@@ -75,6 +75,15 @@ eks_config_list = [{
       name            = "aws-ebs-csi-driver"
       service_account = "ebs-csi-controller-sa"
       policy_arns     = ["service-role/AmazonEBSCSIDriverPolicy"]
+    },
+    {
+      name = "coredns"
+    },
+    {
+      name = "vpc-cni"
+    },
+    {
+      name = "kube-proxy"
     }
   ]
   kubernetes_version = "1.30"
