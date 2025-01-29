@@ -58,7 +58,7 @@ eks_config_list = [{
   role        = "client"
   eks_name    = "perfevala1000"
   vpc_name    = "client-vpc"
-  policy_arns = ["AmazonEKSClusterPolicy", "AmazonEKSVPCResourceController", "AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly", "AmazonEBSCSIDriverPolicy"]
+  policy_arns = ["AmazonEKSClusterPolicy", "AmazonEKSVPCResourceController", "AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly", "service-role/AmazonEBSCSIDriverPolicy"]
   eks_managed_node_groups = [
     {
       name           = "user"
