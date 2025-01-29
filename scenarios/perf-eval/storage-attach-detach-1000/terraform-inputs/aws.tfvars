@@ -73,8 +73,6 @@ eks_config_list = [{
   eks_addons = [
     {
       name            = "aws-ebs-csi-driver"
-      service_account = "ebs-csi-controller-sa"
-      policy_arns     = ["service-role/AmazonEBSCSIDriverPolicy"]
     },
     {
       name = "coredns"
