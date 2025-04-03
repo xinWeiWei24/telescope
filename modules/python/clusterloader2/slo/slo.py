@@ -60,6 +60,7 @@ def configure_clusterloader2(
     network_test,
     no_of_namespaces,
     total_network_policies,
+    small_group_size,
     cnp_test,
     ccnp_test,
     num_cnps,
