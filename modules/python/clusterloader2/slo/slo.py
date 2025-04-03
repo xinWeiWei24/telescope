@@ -278,7 +278,7 @@ def main():
                                   help="Whether network test is running. Must be either True or False")
     parser_configure.add_argument("no_of_namespaces", type=int, nargs='?', default=1, help="Number of namespaces to create")
     parser_configure.add_argument("total_network_policies", type=int, nargs='?', default=0, help="Total number of network policies to create")
-    parser_configure.add_argument("small_group_size", type=int, default=0, help="Number of deployments small group")
+    parser_configure.add_argument("small_group_size", type=int, nargs='?', default=20, help="Number of deployments small group")
     parser_configure.add_argument("cnp_test", type=eval, choices=[True, False], nargs='?', default=False,
                                   help="Whether cnp test is running. Must be either True or False")
     parser_configure.add_argument("ccnp_test", type=eval, choices=[True, False], nargs='?', default=False,
