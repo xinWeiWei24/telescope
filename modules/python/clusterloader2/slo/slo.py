@@ -125,6 +125,7 @@ def configure_clusterloader2(
             file.write(f"CL2_NET_POLICY_ENFORCEMENT_LOAD_COUNT: {total_network_policies}\n")
             file.write("CL2_NET_POLICY_ENFORCEMENT_LOAD_QPS: 10\n")
             file.write("CL2_POLICY_ENFORCEMENT_LOAD_TARGET_NAME: small-deployment\n")
+            file.write(F"CL2_SMALL_GROUP_SIZE: {small_group_size}\n")
 
         if cnp_test:
             file.write("CL2_CNP_TEST: true\n")
@@ -276,6 +277,7 @@ def main():
                                   help="Whether network test is running. Must be either True or False")
     parser_configure.add_argument("no_of_namespaces", type=int, nargs='?', default=1, help="Number of namespaces to create")
     parser_configure.add_argument("total_network_policies", type=int, nargs='?', default=0, help="Total number of network policies to create")
+    parser_configure.add_argument("small_group_size", type=int, default=0, help="Number of deployments small group")
     parser_configure.add_argument("cnp_test", type=eval, choices=[True, False], nargs='?', default=False,
                                   help="Whether cnp test is running. Must be either True or False")
     parser_configure.add_argument("ccnp_test", type=eval, choices=[True, False], nargs='?', default=False,
@@ -331,7 +333,7 @@ def main():
         configure_clusterloader2(args.cpu_per_node, args.node_count, args.node_per_step, args.max_pods,
                                  args.repeats, args.operation_timeout, args.provider,
                                  args.cilium_enabled, args.scrape_containerd,
-                                 args.service_test, args.network_test, args.no_of_namespaces, args.total_network_policies,
+                                 args.service_test, args.network_test, args.no_of_namespaces, args.total_network_policies, args.small_group_size,
                                  args.cnp_test, args.ccnp_test, args.num_cnps, args.num_ccnps, args.dualstack, args.cl2_override_file)
     elif args.command == "validate":
         validate_clusterloader2(args.node_count, args.operation_timeout)
