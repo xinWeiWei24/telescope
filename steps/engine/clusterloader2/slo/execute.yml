@@ -50,4 +50,9 @@ steps:
       CL2_IMAGE: ${{ parameters.engine_input.image }}
       CL2_CONFIG_DIR: $(Pipeline.Workspace)/s/modules/python/clusterloader2/slo/config
       CL2_REPORT_DIR: $(Pipeline.Workspace)/s/modules/python/clusterloader2/slo/results
+      CL2_CONFIG_FILE: load-config.yaml
+      NO_OF_NAMESPACES: ${{ parameters.no_of_namespaces }}
+      TOTAL_NETWORK_POLICIES: ${{ parameters.total_network_policies }}
+      SMALL_GROUP_SIZE: ${{ parameters.small_group_size }}
+      NETWORK_TEST: ${{ parameters.network_test }} #TODO: itia: Remove these 3 param and use default ${NETWORK_TEST:-False} ${NO_OF_NAMESPACES:-1} ${TOTAL_NETWORK_POLICIES:-0}
     displayName: "Run Benchmark"

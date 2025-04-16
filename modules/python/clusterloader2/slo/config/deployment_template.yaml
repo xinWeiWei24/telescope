@@ -15,7 +15,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{if $RunNetPolicyTest}}policy-load-{{end}}{{.Name}}
+  name: {{.Name}}
   labels:
     group: {{.Group}}
 {{if .SvcName}}
@@ -25,7 +25,7 @@ spec:
   replicas: {{.Replicas}}
   selector:
     matchLabels:
-      name: {{.Name}}
+      name: {{if $RunNetPolicyTest}}policy-load-{{end}}{{.Name}}
   strategy:
     type: RollingUpdate
     rollingUpdate:
