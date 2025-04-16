@@ -7,7 +7,7 @@ parameters:
   - name: node_count
     type: number
     default: 5000
-  - name: pods_per_node
+  - name: max_pods
     type: number
     default: 40
   - name: repeats
@@ -47,7 +47,7 @@ stages:
               cpu_per_node: 4
               node_count: ${{ parameters.node_count }}
               node_per_step: 240
-              max_pods: 100
+              max_pods: ${{ parameters.max_pods }}
               pods_per_node: ${{ parameters.pods_per_node }}
               repeats: ${{ parameters.repeats }}
               scale_timeout: ${{ parameters.scale_timeout }}
