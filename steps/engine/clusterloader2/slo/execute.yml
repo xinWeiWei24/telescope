@@ -7,6 +7,18 @@ parameters:
     default: {}
   - name: region
     type: string
+  - name: no_of_namespaces
+    type: number
+    default: 1
+  - name: total_network_policies
+    type: number
+    default: 0
+  - name: small_group_size
+    type: number
+    default: 20
+  - name: network_test
+    type: boolean
+    default: false
 
 steps:
   - script: |
