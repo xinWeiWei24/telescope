@@ -76,7 +76,7 @@ tuningSets:
       timeLimit: {{$deletionTime}}s
 
 steps:
-  - name: Log - namespaces={{$namespaces}}, nodes={{$nodes}}, podsPerNode={{$podsPerNode}}, totalPods={{$totalPods}}, podsPerNamespace={{$podsPerNamespace}}, bigDeploymentsPerNamespace={{$bigDeploymentsPerNamespace}}, smallDeploymentsPerNamespace={{$smallDeploymentsPerNamespace}}, bigGroupSize={{$BIG_GROUP_SIZE}}, smallGroupSize={{$SMALL_GROUP_SIZE}}, repeats={{$repeats}}, $saturationTime={{$saturationTime}}, $deletionTime={{$deletionTime}}
+  - name: Log - namespaces={{$namespaces}}, nodes={{$nodes}}, podsPerNode={{$podsPerNode}}, podsPerNamespace={{podsPerNamespace}}, totalPods={{$totalPods}}, podsPerNamespace={{$podsPerNamespace}}, bigDeploymentsPerNamespace={{$bigDeploymentsPerNamespace}}, smallDeploymentsPerNamespace={{$smallDeploymentsPerNamespace}}, bigGroupSize={{$BIG_GROUP_SIZE}}, smallGroupSize={{$SMALL_GROUP_SIZE}}, repeats={{$repeats}}, $saturationTime={{$saturationTime}}, $deletionTime={{$deletionTime}}
     measurements:
     - Identifier: Dummy
       Method: Sleep
@@ -172,13 +172,13 @@ steps:
         MemoryRequest: {{$latencyPodMemory}}M
         Group: {{$groupName}}
         deploymentLabel: start
-  - name: Waiting - namespaces={{$namespaces}}, nodes={{$nodes}}, nodesPerNamespace={{$nodesPerNamespace}}, podsPerNode={{$podsPerNode}}, totalPods={{$totalPods}}, podsPerNamespace={{$podsPerNamespace}}, bigDeploymentsPerNamespace={{$bigDeploymentsPerNamespace}}, smallDeploymentsPerNamespace={{$smallDeploymentsPerNamespace}}, bigGroupSize={{$BIG_GROUP_SIZE}}, smallGroupSize={{$SMALL_GROUP_SIZE}}, repeats={{$repeats}}, $saturationTime={{$saturationTime}}, $deletionTime={{$deletionTime}}
+  - name: Waiting - namespaces={{$namespaces}}, nodes={{$nodes}}, nodesPerNamespace={{$nodesPerNamespace}}, podsPerNode={{$podsPerNode}}, totalPods={{$totalPods}}, podsPerNamespace={{$podsPerNamespace}}, bigDeploymentsPerNamespace={{$bigDeploymentsPerNamespace}}, smallDeploymentPods={{smallDeploymentPods}}, smallDeploymentsPerNamespace={{$smallDeploymentsPerNamespace}}, bigGroupSize={{$BIG_GROUP_SIZE}}, smallGroupSize={{$SMALL_GROUP_SIZE}}, repeats={{$repeats}}, $saturationTime={{$saturationTime}}, $deletionTime={{$deletionTime}}
     measurements:
     - Identifier: Dummy
       Method: Sleep
       Params:
         action: start
-        duration: 30m
+        duration: 10m
 {{if $NETWORK_TEST}}
   - module:
       path: modules/network-policy/net-policy-metrics.yaml
