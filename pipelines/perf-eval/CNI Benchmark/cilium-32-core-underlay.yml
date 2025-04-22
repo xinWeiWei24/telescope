@@ -1,4 +1,11 @@
 trigger: none
+schedules:
+  - cron: "0 8,16 * * *"
+    displayName: "8:00 AM & 4 PM Daily"
+    branches:
+      include:
+        - main
+    always: true
 
 parameters:
   - name: no_of_namespaces
