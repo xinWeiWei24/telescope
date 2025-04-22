@@ -1,7 +1,7 @@
 trigger: none
 schedules:
   - cron: "0 5,10,15,20 * * *"
-    displayName: "8:00 AM & 4 PM Daily"
+    displayName: "4 runs daily, avoid 12 AM"
     branches:
       include:
         - carlota/openai-5knodespipeline
