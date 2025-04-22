@@ -1,6 +1,6 @@
 trigger: none
 schedules:
-  - cron: "0 8,16 * * *"
+  - cron: "0 8,12,16 * * *"
     displayName: "8:00 AM & 4 PM Daily"
     branches:
       include:
