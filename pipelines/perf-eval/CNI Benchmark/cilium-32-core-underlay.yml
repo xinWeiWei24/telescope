@@ -4,7 +4,7 @@ schedules:
     displayName: "8:00 AM & 4 PM Daily"
     branches:
       include:
-        - carlota/opernai-5knodespipeline
+        - carlota/openai-5knodespipeline
     always: true
 
 parameters:
