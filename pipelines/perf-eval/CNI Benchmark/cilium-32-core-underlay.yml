@@ -10,13 +10,13 @@ schedules:
 parameters:
   - name: no_of_namespaces
     type: number
-    default: 100
+    default: 35
   - name: node_count
     type: number
-    default: 5000
+    default: 142
   - name: max_pods
     type: number
-    default: 40
+    default: 41
   - name: repeats
     type: number
     default: 1
@@ -28,7 +28,7 @@ parameters:
     default: 0
   - name: small_group_size
     type: number
-    default: 20
+    default: 630
 
 variables:
   SCENARIO_TYPE: perf-eval
