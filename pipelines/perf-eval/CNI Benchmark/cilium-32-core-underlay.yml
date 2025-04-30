@@ -22,7 +22,7 @@ parameters:
     default: 1
   - name: scale_timeout
     type: string
-    default: "30m"
+    default: "60m"
   - name: total_nework_policies
     type: number
     default: 0
