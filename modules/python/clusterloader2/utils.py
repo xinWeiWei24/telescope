@@ -46,12 +46,29 @@ def run_cl2_command(kubeconfig, cl2_image, cl2_config_dir, cl2_report_dir, provi
 
     print(f"Running clusterloader2 with command: {command} and volumes: {volumes}")
     try:
-        container = docker_client.run_container(cl2_image, command, volumes, detach=True)
-        for log in container.logs(stream=True):
-            print(log.decode('utf-8'), end='')
-        container.wait()
+        container = docker_client.run_container(
+            cl2_image,
+            command,
+            volumes=volumes,
+            detach=True,
+            stdout=True,
+            stderr=True
+        )
+
+        for stdout_chunk, stderr_chunk in container.logs(stream=True, stdout=True, stderr=True, demux=True):
+            if stdout_chunk:
+                print(stdout_chunk.decode('utf-8'), end='', flush=True)
+            if stderr_chunk:
+                print(stderr_chunk.decode('utf-8'), end='', flush=True)
+
+        result = container.wait()
+        if result['StatusCode'] != 0:
+            error_output = container.logs(stderr=True).decode('utf-8')
+            raise docker.errors.ContainerError(container, result['StatusCode'], command, cl2_image, error_output)
+
     except docker.errors.ContainerError as e:
-        print(f"Container exited with a non-zero status code: {e.exit_status}\n{e.stderr.decode('utf-8')}")
+        print(f"\nContainer exited with non-zero status code: {e.exit_status}")
+        print(e.stderr)
 
 def get_measurement(file_path):
     file_name = os.path.basename(file_path)
