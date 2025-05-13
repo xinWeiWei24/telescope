@@ -87,6 +87,7 @@ def configure_clusterloader2(
         file.write("CL2_PROMETHEUS_CPU_SCALE_FACTOR: 30.0\n")
         file.write("CL2_PROMETHEUS_NODE_SELECTOR: \"prometheus: \\\"true\\\"\"\n")
         file.write("CL2_POD_STARTUP_LATENCY_THRESHOLD: 3m\n")
+        file.write(f"CL2_SMALL_GROUP_SIZE: {small_group_size}\n")
 
         if scrape_containerd:
             file.write(f"CL2_SCRAPE_CONTAINERD: {str(scrape_containerd).lower()}\n")
@@ -123,7 +124,7 @@ def configure_clusterloader2(
             file.write(f"CL2_NET_POLICY_ENFORCEMENT_LOAD_COUNT: {total_network_policies}\n")
             file.write("CL2_NET_POLICY_ENFORCEMENT_LOAD_QPS: 10\n")
             file.write("CL2_POLICY_ENFORCEMENT_LOAD_TARGET_NAME: small-deployment\n")
-            file.write(f"CL2_SMALL_GROUP_SIZE: {small_group_size}\n")
+            # file.write(f"CL2_SMALL_GROUP_SIZE: {small_group_size}\n")
 
         if cnp_test:
             file.write("CL2_CNP_TEST: true\n")
