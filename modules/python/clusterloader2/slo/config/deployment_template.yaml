@@ -46,18 +46,18 @@ spec:
     spec:
       nodeSelector:
         slo: "true"
-{{if $RunNetPolicyTest}}
-      hostNetwork: false
-      containers:
-      - image: acnpublic.azurecr.io/scaletest/nginx:latest
-        name: nginx-server
-        ports:
-        - containerPort: 80
-        resources:
-          requests:
-            cpu: {{$CpuRequest}}
-            memory: {{$MemoryRequest}}
-{{else}}
+# {{if $RunNetPolicyTest}}
+#       hostNetwork: false
+#       containers:
+#       - image: acnpublic.azurecr.io/scaletest/nginx:latest
+#         name: nginx-server
+#         ports:
+#         - containerPort: 80
+#         resources:
+#           requests:
+#             cpu: {{$CpuRequest}}
+#             memory: {{$MemoryRequest}}
+# {{else}}
       containers:
       - env:
         - name: ENV_VAR
@@ -70,7 +70,7 @@ spec:
           requests:
             cpu: {{$CpuRequest}}
             memory: {{$MemoryRequest}}
-{{end}}
+# {{end}}
       # Add not-ready/unreachable tolerations for 15 minutes so that node
       # failure doesn't trigger pod deletion.
       tolerations:
