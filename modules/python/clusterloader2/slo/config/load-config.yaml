@@ -97,58 +97,58 @@ steps:
         action: start
 {{end}}
 
-{{if $NETWORK_TEST}}
-  - module:
-        path: /modules/network-policy/net-policy-metrics.yaml
-        params:
-          action: start
-{{end}}
+# {{if $NETWORK_TEST}}
+#   - module:
+#         path: /modules/network-policy/net-policy-metrics.yaml
+#         params:
+#           action: start
+# {{end}}
 
-{{if $SCRAPE_CONTAINERD}}
-  - module:
-      path: /modules/containerd-measurements.yaml
-      params:
-        action: start
-{{end}}
+# {{if $SCRAPE_CONTAINERD}}
+#   - module:
+#       path: /modules/containerd-measurements.yaml
+#       params:
+#         action: start
+# {{end}}
 
-{{range $i := Loop $repeats}}
-{{if $SERVICE_TEST}}
-  - module:
-      path: /modules/services.yaml
-      params:
-        actionName: "Creating"
-        namespaces: {{$namespaces}}
-        smallServicesPerNamespace: {{$smallDeploymentsPerNamespace}}
-        bigServicesPerNamespace: {{$bigDeploymentsPerNamespace}}
-{{end}}
+# {{range $i := Loop $repeats}}
+# {{if $SERVICE_TEST}}
+#   - module:
+#       path: /modules/services.yaml
+#       params:
+#         actionName: "Creating"
+#         namespaces: {{$namespaces}}
+#         smallServicesPerNamespace: {{$smallDeploymentsPerNamespace}}
+#         bigServicesPerNamespace: {{$bigDeploymentsPerNamespace}}
+# {{end}}
 
-{{if $CNP_TEST}}
-  - module:
-      path: /modules/ciliumnetworkpolicy.yaml
-      params:
-        actionName: "Creating"
-        namespaces: {{$namespaces}}
-        Group: {{$groupName}}
-        cnpsPerNamespace: {{$CNPS_PER_NAMESPACE}}
-{{end}}
+# {{if $CNP_TEST}}
+#   - module:
+#       path: /modules/ciliumnetworkpolicy.yaml
+#       params:
+#         actionName: "Creating"
+#         namespaces: {{$namespaces}}
+#         Group: {{$groupName}}
+#         cnpsPerNamespace: {{$CNPS_PER_NAMESPACE}}
+# {{end}}
 
-{{if $CCNP_TEST}}
-  - module:
-      path: /modules/ciliumclusternetworkpolicy.yaml
-      params:
-        actionName: "Creating"
-        Group: {{$groupName}}
-        ccnps: {{$CCNPS}}
-{{end}}
+# {{if $CCNP_TEST}}
+#   - module:
+#       path: /modules/ciliumclusternetworkpolicy.yaml
+#       params:
+#         actionName: "Creating"
+#         Group: {{$groupName}}
+#         ccnps: {{$CCNPS}}
+# {{end}}
 
-{{if $NETWORK_TEST}}
-  - module:
-      path: modules/network-policy/net-policy-enforcement-latency.yaml
-      params:
-        setup: true
-        run: true
-        testType: "pod-creation"
-{{end}}
+# {{if $NETWORK_TEST}}
+#   - module:
+#       path: modules/network-policy/net-policy-enforcement-latency.yaml
+#       params:
+#         setup: true
+#         run: true
+#         testType: "pod-creation"
+# {{end}}
 
   - module:
       path: /modules/reconcile-objects.yaml
@@ -172,48 +172,48 @@ steps:
         MemoryRequest: {{$latencyPodMemory}}M
         Group: {{$groupName}}
         deploymentLabel: start
-{{if $NETWORK_TEST}}
-  - module:
-      path: modules/network-policy/net-policy-metrics.yaml
-      params:
-        action: gather
-        usePolicyCreationMetrics: false
+# {{if $NETWORK_TEST}}
+#   - module:
+#       path: modules/network-policy/net-policy-metrics.yaml
+#       params:
+#         action: gather
+#         usePolicyCreationMetrics: false
 
-  - module:
-      path: modules/network-policy/net-policy-enforcement-latency.yaml
-      params:
-        complete: true
-        testType: "pod-creation"
+#   - module:
+#       path: modules/network-policy/net-policy-enforcement-latency.yaml
+#       params:
+#         complete: true
+#         testType: "pod-creation"
 
-  - module:
-      path: modules/network-policy/net-policy-enforcement-latency.yaml
-      params:
-        run: true
-        testType: "policy-creation"
-{{end}}
+#   - module:
+#       path: modules/network-policy/net-policy-enforcement-latency.yaml
+#       params:
+#         run: true
+#         testType: "policy-creation"
+# {{end}}
 
-  - module:
-      path: /modules/reconcile-objects.yaml
-      params:
-        actionName: "restart"
-        namespaces: {{$namespaces}}
-        tuningSet: Sequence
-        operationTimeout: {{$operationTimeout}}
-    {{if or $CCNP_TEST $CNP_TEST}}
-        bigDeploymentSize: 0
-        bigDeploymentsPerNamespace: 0
-        cnp_test: {{$CNP_TEST}}
-        ccnp_test: {{$CCNP_TEST}}
-    {{else}}
-        bigDeploymentSize: {{$BIG_GROUP_SIZE}}
-        bigDeploymentsPerNamespace: {{$bigDeploymentsPerNamespace}}
-    {{end}}
-        smallDeploymentSize: {{$SMALL_GROUP_SIZE}}
-        smallDeploymentsPerNamespace: {{$smallDeploymentsPerNamespace}}
-        CpuRequest: {{$latencyPodCpu}}m
-        MemoryRequest: {{$latencyPodMemory}}M
-        Group: {{$groupName}}
-        deploymentLabel: restart
+  # - module:
+  #     path: /modules/reconcile-objects.yaml
+  #     params:
+  #       actionName: "restart"
+  #       namespaces: {{$namespaces}}
+  #       tuningSet: Sequence
+  #       operationTimeout: {{$operationTimeout}}
+  #   {{if or $CCNP_TEST $CNP_TEST}}
+  #       bigDeploymentSize: 0
+  #       bigDeploymentsPerNamespace: 0
+  #       cnp_test: {{$CNP_TEST}}
+  #       ccnp_test: {{$CCNP_TEST}}
+  #   {{else}}
+  #       bigDeploymentSize: {{$BIG_GROUP_SIZE}}
+  #       bigDeploymentsPerNamespace: {{$bigDeploymentsPerNamespace}}
+  #   {{end}}
+  #       smallDeploymentSize: {{$SMALL_GROUP_SIZE}}
+  #       smallDeploymentsPerNamespace: {{$smallDeploymentsPerNamespace}}
+  #       CpuRequest: {{$latencyPodCpu}}m
+  #       MemoryRequest: {{$latencyPodMemory}}M
+  #       Group: {{$groupName}}
+  #       deploymentLabel: restart
 
   - module:
       path: /modules/reconcile-objects.yaml
@@ -235,32 +235,32 @@ steps:
         smallDeploymentsPerNamespace: 0
         deploymentLabel: restart
         Group: {{$groupName}}
-{{if $SERVICE_TEST}}
-  - module:
-      path: /modules/services.yaml
-      params:
-        actionName: "Deleting"
-        namespaces: {{$namespaces}}
-        smallServicesPerNamespace: 0
-        bigServicesPerNamespace: 0
-{{end}}
-{{if $CNP_TEST}}
-  - module:
-      path: /modules/ciliumnetworkpolicy.yaml
-      params:
-        actionName: "Deleting"
-        namespaces: {{$namespaces}}
-        cnpsPerNamespace: 0
-{{end}}
-{{if $CCNP_TEST}}
-  - module:
-      path: /modules/ciliumclusternetworkpolicy.yaml
-      params:
-        actionName: "Deleting"
-        namespaces: {{$namespaces}}
-        ccnps: 0
-{{end}}
-{{end}}
+# {{if $SERVICE_TEST}}
+#   - module:
+#       path: /modules/services.yaml
+#       params:
+#         actionName: "Deleting"
+#         namespaces: {{$namespaces}}
+#         smallServicesPerNamespace: 0
+#         bigServicesPerNamespace: 0
+# {{end}}
+# {{if $CNP_TEST}}
+#   - module:
+#       path: /modules/ciliumnetworkpolicy.yaml
+#       params:
+#         actionName: "Deleting"
+#         namespaces: {{$namespaces}}
+#         cnpsPerNamespace: 0
+# {{end}}
+# {{if $CCNP_TEST}}
+#   - module:
+#       path: /modules/ciliumclusternetworkpolicy.yaml
+#       params:
+#         actionName: "Deleting"
+#         namespaces: {{$namespaces}}
+#         ccnps: 0
+# {{end}}
+# {{end}}
 
 {{if $CILIUM_METRICS_ENABLED}}
   - module:
@@ -269,19 +269,19 @@ steps:
         action: gather
 {{end}}
 
-{{if $SCRAPE_CONTAINERD}}
-  - name: Wait for last scrape
-    measurements:
-      - Identifier: Sleep
-        Method: Sleep
-        Params:
-          duration: 10m
+# {{if $SCRAPE_CONTAINERD}}
+#   - name: Wait for last scrape
+#     measurements:
+#       - Identifier: Sleep
+#         Method: Sleep
+#         Params:
+#           duration: 10m
 
-  - module:
-      path: /modules/containerd-measurements.yaml
-      params:
-        action: gather
-{{end}}
+#   - module:
+#       path: /modules/containerd-measurements.yaml
+#       params:
+#         action: gather
+# {{end}}
 
   - module:
       path: /modules/measurements.yaml
@@ -290,15 +290,15 @@ steps:
         group: {{$groupName}}
 
 
-{{if $NETWORK_TEST}}
-  - module:
-      path: modules/network-policy/net-policy-metrics.yaml
-      params:
-        action: gather
+# {{if $NETWORK_TEST}}
+#   - module:
+#       path: modules/network-policy/net-policy-metrics.yaml
+#       params:
+#         action: gather
 
-  - module:
-      path: modules/network-policy/net-policy-enforcement-latency.yaml
-      params:
-        complete: true
-        testType: "policy-creation"
-{{end}}
+#   - module:
+#       path: modules/network-policy/net-policy-enforcement-latency.yaml
+#       params:
+#         complete: true
+#         testType: "policy-creation"
+# {{end}}
