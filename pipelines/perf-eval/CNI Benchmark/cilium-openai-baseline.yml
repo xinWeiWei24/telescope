@@ -29,12 +29,12 @@ parameters:
 
 variables:
   SCENARIO_TYPE: perf-eval
-  SCENARIO_NAME: 32-core-network-policy-churn
+  SCENARIO_NAME: openai-baseline
   SCENARIO_VERSION: main
   OWNER: aks
 
 stages:
-  - stage: azure_canada_central_32_core_underlay
+  - stage: azure_canada_central_openai_baseline
     dependsOn: []
     jobs:
       - template: /jobs/competitive-test.yml
