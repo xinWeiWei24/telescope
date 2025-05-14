@@ -137,7 +137,7 @@ def collect_clusterloader2(
         "group": None,
         "measurement": None,
         "result": None,
-        "cloud_info": provider,
+        "cloud_info": cloud_info,
         "run_id": run_id,
         "run_url": run_url,
         "test_type": test_type,
