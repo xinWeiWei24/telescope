@@ -28,7 +28,7 @@ def calculate_config(cpu_per_node, node_count, max_pods, provider, service_test,
     nodes_per_namespace = min(node_count, DEFAULT_NODES_PER_NAMESPACE)
 
     pods_per_node = DEFAULT_PODS_PER_NODE
-    if service_test:
+    if service_test or max_pods > 0: #TODO confirm this doesn't break existing tests
         pods_per_node = max_pods
 
     if cnp_test or ccnp_test:
@@ -54,6 +54,8 @@ def configure_clusterloader2(
     cilium_enabled,
     scrape_containerd,
     service_test,
+    no_of_namespaces,
+    small_group_size,
     cnp_test,
     ccnp_test,
     num_cnps,
@@ -69,11 +71,13 @@ def configure_clusterloader2(
         file.write(f"CL2_LOAD_TEST_THROUGHPUT: {throughput}\n")
         file.write(f"CL2_NODES_PER_NAMESPACE: {nodes_per_namespace}\n")
         file.write(f"CL2_NODES_PER_STEP: {node_per_step}\n")
+        file.write(f"CL2_NODES: {node_count}\n")
         file.write(f"CL2_PODS_PER_NODE: {pods_per_node}\n")
         file.write(f"CL2_DEPLOYMENT_SIZE: {pods_per_node}\n")
         file.write(f"CL2_LATENCY_POD_CPU: {cpu_request}\n")
         file.write(f"CL2_REPEATS: {repeats}\n")
         file.write(f"CL2_STEPS: {steps}\n")
+        file.write(f"CL2_NO_OF_NAMESPACES: {no_of_namespaces}\n")
         file.write(f"CL2_OPERATION_TIMEOUT: {operation_timeout}\n")
         file.write("CL2_PROMETHEUS_TOLERATE_MASTER: true\n")
         file.write("CL2_PROMETHEUS_MEMORY_LIMIT_FACTOR: 100.0\n")
@@ -81,6 +85,7 @@ def configure_clusterloader2(
         file.write("CL2_PROMETHEUS_CPU_SCALE_FACTOR: 30.0\n")
         file.write("CL2_PROMETHEUS_NODE_SELECTOR: \"prometheus: \\\"true\\\"\"\n")
         file.write("CL2_POD_STARTUP_LATENCY_THRESHOLD: 3m\n")
+        file.write(f"CL2_SMALL_GROUP_SIZE: {small_group_size}\n")
 
         if scrape_containerd:
             file.write(f"CL2_SCRAPE_CONTAINERD: {str(scrape_containerd).lower()}\n")
@@ -242,6 +247,8 @@ def main():
                                   help="Whether to scrape containerd metrics. Must be either True or False")
     parser_configure.add_argument("service_test", type=str2bool, choices=[True, False], default=False,
                                   help="Whether service test is running. Must be either True or False")
+    parser_configure.add_argument("no_of_namespaces", type=int, nargs='?', default=1, help="Number of namespaces to create")
+    parser_configure.add_argument("small_group_size", type=int, nargs='?', default=20, help="Number of deployments small group")
     parser_configure.add_argument("cnp_test", type=str2bool, choices=[True, False], nargs='?', default=False,
                                   help="Whether cnp test is running. Must be either True or False")
     parser_configure.add_argument("ccnp_test", type=str2bool, choices=[True, False], nargs='?', default=False,
@@ -295,7 +302,8 @@ def main():
         configure_clusterloader2(args.cpu_per_node, args.node_count, args.node_per_step, args.max_pods,
                                  args.repeats, args.operation_timeout, args.provider,
                                  args.cilium_enabled, args.scrape_containerd,
-                                 args.service_test, args.cnp_test, args.ccnp_test, args.num_cnps, args.num_ccnps, args.dualstack, args.cl2_override_file)
+                                 args.service_test, args.no_of_namespaces, args.small_group_size,
+                                  args.cnp_test, args.ccnp_test, args.num_cnps, args.num_ccnps, args.dualstack, args.cl2_override_file)
     elif args.command == "validate":
         validate_clusterloader2(args.node_count, args.operation_timeout)
     elif args.command == "execute":

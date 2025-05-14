@@ -14,7 +14,7 @@ name: load-config
 {{$groupName := DefaultParam .CL2_GROUP_NAME "service-discovery"}}
 
 # TODO(jshr-w): This should eventually use >1 namespace.
-{{$namespaces := 1}}
+{{$namespaces := DefaultParam .CL2_NO_OF_NAMESPACES 1}}
 {{$nodes := DefaultParam .CL2_NODES 1000}}
 
 {{$operationTimeout := DefaultParam .CL2_OPERATION_TIMEOUT "15m"}}
@@ -31,7 +31,7 @@ name: load-config
 
 # Service test
 {{$BIG_GROUP_SIZE := DefaultParam .BIG_GROUP_SIZE 4000}}
-{{$SMALL_GROUP_SIZE := DefaultParam .SMALL_GROUP_SIZE 20}}
+{{$SMALL_GROUP_SIZE := DefaultParam .CL2_SMALL_GROUP_SIZE 20}}
 
 # TODO(jshr-w): Add some flexibility to BIG_GROUP_SIZE (e.g. upstream uses 250)
 {{$bigDeploymentsPerNamespace := DefaultParam .bigDeploymentsPerNamespace 0}}
@@ -75,7 +75,7 @@ tuningSets:
       timeLimit: {{$deletionTime}}s
 
 steps:
-  - name: Log - namespaces={{$namespaces}}, nodesPerNamespace={{$nodesPerNamespace}}, podsPerNode={{$podsPerNode}}, totalPods={{$totalPods}}, podsPerNamespace={{$podsPerNamespace}}, bigDeploymentsPerNamespace={{$bigDeploymentsPerNamespace}}, smallDeploymentsPerNamespace={{$smallDeploymentsPerNamespace}}, bigGroupSize={{$BIG_GROUP_SIZE}}, smallGroupSize={{$SMALL_GROUP_SIZE}}, repeats={{$repeats}}, $saturationTime={{$saturationTime}}, $deletionTime={{$deletionTime}}
+  - name: Log - namespaces={{$namespaces}}, nodes={{$nodes}}, nodesPerNamespace={{$nodesPerNamespace}}, podsPerNode={{$podsPerNode}}, totalPods={{$totalPods}}, podsPerNamespace={{$podsPerNamespace}}, bigDeploymentsPerNamespace={{$bigDeploymentsPerNamespace}}, smallDeploymentPods={{$smallDeploymentPods},  smallDeploymentsPerNamespace={{$smallDeploymentsPerNamespace}}, bigGroupSize={{$BIG_GROUP_SIZE}}, smallGroupSize={{$SMALL_GROUP_SIZE}}, repeats={{$repeats}}, $saturationTime={{$saturationTime}}, $deletionTime={{$deletionTime}}
     measurements:
     - Identifier: Dummy
       Method: Sleep
