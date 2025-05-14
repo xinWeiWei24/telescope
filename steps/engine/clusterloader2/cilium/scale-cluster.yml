@@ -48,7 +48,7 @@ steps:
       currentLabels=$(echo $currentFields | jq '.nodeLabels')
       currentTaint=$(echo $currentFields | jq '.nodeTaints')
 
-      if [ "$currentLabels" != *'"slo": "true"'* || "$currentTaint" != *slo=true:NoSchedule* ]; then
+      if [[ "$currentLabels" != *'"slo": "true"'* || "$currentTaint" != *slo=true:NoSchedule* ]]; then
         az aks nodepool update --cluster-name $aks_name --name $np --resource-group $aks_rg --node-taints "slo=true:NoSchedule" --labels slo=true
         sleep 300
       fi
