@@ -23,9 +23,6 @@ parameters:
   - name: scale_timeout
     type: string
     default: "60m"
-  - name: total_nework_policies
-    type: number
-    default: 0
   - name: small_group_size
     type: number
     default: 630
@@ -48,7 +45,7 @@ stages:
           engine: clusterloader2
           engine_input:
             image: "ghcr.io/azure/clusterloader2:v20241022"
-          topology: network-churn
+          topology: cilium-usercluster #TODO confirm this is the correct topology
           matrix:
             azure_cilium:
               cpu_per_node: 4
@@ -58,7 +55,6 @@ stages:
               repeats: ${{ parameters.repeats }}
               scale_timeout: ${{ parameters.scale_timeout }}
               no_of_namespaces: ${{ parameters.no_of_namespaces }}
-              total_network_policies: ${{ parameters.total_nework_policies }}
               small_group_size: ${{ parameters.small_group_size }}
               cilium_enabled: True
               network_policy: cilium
