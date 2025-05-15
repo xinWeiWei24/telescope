@@ -4,7 +4,7 @@ schedules:
     displayName: "4 runs daily, avoid 12 AM"
     branches:
       include:
-        - carlota/openai-5knodespipeline
+        - carlota/openai-baseline-pipeline
     always: true
 
 parameters:
