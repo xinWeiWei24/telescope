@@ -150,6 +150,7 @@ def execute_clusterloader2(
 def collect_clusterloader2(
     cpu_per_node,
     node_count,
+    no_of_namespaces,
     max_pods,
     repeats,
     cl2_report_dir,
@@ -181,6 +182,7 @@ def collect_clusterloader2(
         "timestamp": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
         "cpu_per_node": cpu_per_node,
         "node_count": node_count,
+        "no_of_namespaces": no_of_namespaces,
         "pod_count": pod_count,
         "churn_rate": repeats,
         "status": status,
@@ -310,7 +312,7 @@ def main():
         execute_clusterloader2(args.cl2_image, args.cl2_config_dir, args.cl2_report_dir, args.cl2_config_file,
                                args.kubeconfig, args.provider, args.scrape_containerd)
     elif args.command == "collect":
-        collect_clusterloader2(args.cpu_per_node, args.node_count, args.max_pods, args.repeats,
+        collect_clusterloader2(args.cpu_per_node, args.node_count, args.no_of_namespaces, args.max_pods, args.repeats,
                                args.cl2_report_dir, args.cloud_info, args.run_id, args.run_url,
                                args.service_test, args.cnp_test, args.ccnp_test,
                                args.result_file, args.test_type, args.start_timestamp)
