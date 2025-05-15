@@ -7,6 +7,9 @@ parameters:
   type: string
 - name: engine
   type: string
+- name: scale_cluster
+  type: boolean
+  default: true
 
 steps:
 - script: |
@@ -22,3 +25,4 @@ steps:
     cloud: ${{ parameters.cloud }}
     regions: ${{ parameters.regions }}
     engine: ${{ parameters.engine }}
+    scale_cluster: ${{ parameters.scale_cluster }}
