@@ -5,15 +5,19 @@ parameters:
     type: string
   - name: regions
     type: object
+  - name: scale_cluster
+    type: boolean
+    default: true
 
 steps:
   - template: /steps/cloud/${{ parameters.cloud }}/update-kubeconfig.yml
     parameters:
       role: ces
       region: ${{ parameters.regions[0] }}
-  - template: /steps/engine/clusterloader2/cilium/scale-cluster.yml
-    parameters:
-      role: ces
-      region: ${{ parameters.regions[0] }}
-      nodes_per_nodepool: 500
-      enable_autoscale: "false"
+  - ${{ if eq(parameters.scale_cluster, true) }}: 
+    - template: /steps/engine/clusterloader2/cilium/scale-cluster.yml
+      parameters:
+        role: ces
+        region: ${{ parameters.regions[0] }}
+        nodes_per_nodepool: 500
+        enable_autoscale: "false"
