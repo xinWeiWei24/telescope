@@ -1,6 +1,6 @@
 trigger: none
 schedules:
-  - cron: "0 5,10,15,20 * * *"
+  - cron: "*/30 * * * *"
     displayName: "4 runs daily, avoid 12 AM"
     branches:
       include:
@@ -10,13 +10,13 @@ schedules:
 parameters:
   - name: no_of_namespaces
     type: number
-    default: 35
+    default: 10
   - name: node_count
     type: number
-    default: 142
+    default: 10
   - name: max_pods
     type: number
-    default: 41
+    default: 10
   - name: repeats
     type: number
     default: 1
@@ -25,7 +25,7 @@ parameters:
     default: "60m"
   - name: small_group_size
     type: number
-    default: 630
+    default: 30
 
 variables:
   SCENARIO_TYPE: perf-eval
