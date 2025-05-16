@@ -1,10 +1,10 @@
 trigger: none
 schedules:
-  - cron: "*/30 * * * *"
+  - cron: "*/5 * * * *"
     displayName: "4 runs daily, avoid 12 AM"
     branches:
       include:
-        - carlota/openai-baseline-pipeline
+        - openai-baseline-pipeline
     always: true
 
 parameters:
