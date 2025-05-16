@@ -350,7 +350,7 @@ def main():
             args.netpol_latency_test,
             args.netpol_soak_test,
             args.restart_deletion_enabled,
-            args.l3_l4_port_enabled
+            args.l3_l4_port_enabled,
             args.cl2_override_file,
         )
     elif args.command == "execute":
