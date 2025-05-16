@@ -19,6 +19,7 @@ def configure_clusterloader2(
     netpol_latency_test,
     netpol_soak_test,
     restart_deletion_enabled,
+    l3_l4_port_enabled,
     override_file,
 ):
     # Ensure the directory for override_file exists
@@ -44,12 +45,14 @@ def configure_clusterloader2(
             file.write("CL2_PROMETHEUS_SCRAPE_CILIUM_OPERATOR: true\n")
             file.write("CL2_PROMETHEUS_SCRAPE_CILIUM_AGENT: true\n")
             file.write("CL2_PROMETHEUS_SCRAPE_CILIUM_AGENT_INTERVAL: 30s\n")
-            file.write("CL2_L3_L4_PORT: true\n")
 
         if cilium_envoy_enabled:
             file.write("# Cilium Envoy config\n")
             file.write("CL2_CILIUM_ENVOY_ENABLED: true\n")
             file.write("CL2_PROMETHEUS_SCRAPE_CILIUM_ENVOY: true\n")
+
+        if l3_l4_port_enabled:
+            file.write("CL2_L3_L4_PORT: true\n")
 
         if l7_enabled:
             file.write("CL2_NET_POLICY_L7_ENABLED: true\n")
@@ -245,6 +248,13 @@ def main():
         help="Whether l7 is enabled. Must be either True or False",
     )
     parser_configure.add_argument(
+        "--l3_l4_port_enabled",
+        type=str2bool,
+        choices=[True, False],
+        default=False,
+        help="Whether l3-l4 port is enabled. Must be either True or False",
+    )
+    parser_configure.add_argument(
         "--repeats", type=int, required=True, help="number of repeats"
     )
     parser_configure.add_argument(
@@ -340,6 +350,7 @@ def main():
             args.netpol_latency_test,
             args.netpol_soak_test,
             args.restart_deletion_enabled,
+            args.l3_l4_port_enabled
             args.cl2_override_file,
         )
     elif args.command == "execute":
